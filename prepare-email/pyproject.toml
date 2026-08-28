@@ -1,0 +1,43 @@
+[project]
+name = "strata-prepare-email"
+version = "0.1.0"
+description = "Mail into a catalog: the email sample type, and converters from .eml and message JSON"
+requires-python = ">=3.13"
+# Only the catalog, and the standard library's own mail parser. A plugin
+# that made this expensive to install would be a poor advertisement for
+# preparers being plugins at all.
+dependencies = [
+    "strata-catalog",
+    "strata-labels",
+]
+
+# Seeding a corpus that arrived with candidate spans needs a project and a
+# configured catalog, which is the CLI's business rather than this one's.
+[project.optional-dependencies]
+seed = ["strata-labeller"]
+test = ["pytest>=8.0", "strata-catalog[test]"]
+
+[project.scripts]
+# Only importable with the seed extra.
+strata-seed-email = "strata.prepare_email.seed:main"
+
+# What this adds to a catalog: one sample type, and two ways into it.
+[project.entry-points."strata.sample_types"]
+email = "strata.prepare_email.types:Email"
+
+[project.entry-points."strata.preparers"]
+eml = "strata.prepare_email.eml:EmlPreparer"
+email-json = "strata.prepare_email.messages:MessagesPreparer"
+
+[tool.uv.sources]
+strata-catalog = { workspace = true }
+strata-labels = { workspace = true }
+strata-labeller = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# PEP 420 namespace: no strata/__init__.py in any package, or they stop merging
+packages = ["strata"]
