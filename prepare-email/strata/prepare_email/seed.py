@@ -124,8 +124,13 @@ def main(argv: list[str] | None = None) -> int:
     # Not "human": nobody has looked at these. That distinction is the only
     # thing separating a reviewed label from a regex's guess, and an export
     # overwrites it with "human" the moment someone submits the task.
-    annotated, _skipped = catalog.annotate_many(label_set_id, items, source="import")
-    print(f"\nSeeded {annotated:,} annotation(s) as source='import'")
+    written = catalog.annotate_many(label_set_id, items, source="import")
+    print(f"\nSeeded {written.annotated:,} annotation(s) as source='import'")
+    if written.kept:
+        # Running the seed again after a review pass is the case this is
+        # for: the reviewer's answers stand, and the guesses they replaced
+        # do not come back.
+        print(f"  {written.kept:,} left alone — a person had already answered them")
     if missing:
         print(f"  {missing:,} chosen file(s) were not in the catalog — run ingest first")
     return 0
