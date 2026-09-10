@@ -70,9 +70,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--apply", action="store_true", help="Write; otherwise report only")
     args = parser.parse_args(argv)
 
+    from strata.catalog import CatalogError
     from strata.catalog.blobs import checksum_of
-    from strata.labeller.cli import _catalog_for
-    from strata.labeller.config import Settings
+    from strata.catalog.config import load_catalogs, open_catalog
     from strata.labeller.project import Project
 
     project = Project.load(args.project)
@@ -105,8 +105,11 @@ def main(argv: list[str] | None = None) -> int:
         print("\nReport only. Pass --apply to write.")
         return 0
 
-    settings = Settings.load(args.config)
-    catalog, _root = _catalog_for(settings, args.config, name=project.catalog.name)
+    try:
+        catalog = open_catalog(load_catalogs(args.config).named(project.catalog.name))
+    except CatalogError as e:
+        print(e, file=sys.stderr)
+        return 1
     label_set_id, _schema = catalog.label_set(project.label_set_name)
 
     items, missing = [], 0
