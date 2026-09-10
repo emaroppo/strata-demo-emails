@@ -7,15 +7,15 @@ requires-python = ">=3.13"
 # that made this expensive to install would be a poor advertisement for
 # preparers being plugins at all.
 dependencies = [
-    "strata-catalog",
-    "strata-labels",
+    "strata-catalog>=0.1,<0.2",
+    "strata-labels>=0.1,<0.2",
 ]
 
 # Seeding a corpus that arrived with candidate spans needs a project and a
 # configured catalog, which is the CLI's business rather than this one's.
 [project.optional-dependencies]
-seed = ["strata-labeller"]
-test = ["pytest>=8.0", "strata-catalog[test]"]
+seed = ["strata-labeller>=0.1,<0.2"]
+test = ["pytest>=8.0", "strata-catalog[test]>=0.1,<0.2"]
 
 [project.scripts]
 # Only importable with the seed extra.
