@@ -2,6 +2,7 @@
 name = "strata-prepare-email"
 version = "0.1.0"
 description = "Mail into a catalog: the email sample type, and converters from .eml and message JSON"
+readme = "README.md"
 requires-python = ">=3.13"
 # Only the catalog, and the standard library's own mail parser. A plugin
 # that made this expensive to install would be a poor advertisement for
