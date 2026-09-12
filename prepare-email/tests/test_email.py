@@ -12,9 +12,9 @@ import json
 
 import pytest
 
-from strata.catalog.prepared import PreparedIndex
-from strata.catalog.preparer_conformance import PreparerContract
-from strata.catalog.preparers import PreparerError, run
+from strata.catalog.types.prepared import PreparedIndex
+from strata.catalog.types.preparer_conformance import PreparerContract
+from strata.catalog.types.preparers import PreparerError, run
 from strata.prepare_email.eml import EmlPreparer
 from strata.prepare_email.messages import MessagesPreparer
 from strata.prepare_email.types import Email

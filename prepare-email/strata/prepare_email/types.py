@@ -6,7 +6,7 @@ no offset moves. Threads are not grouped yet. See ``docs/adr/0010``.
 
 from typing import ClassVar
 
-from strata.catalog.builtin_types import Text
+from strata.catalog.types.builtin_types import Text
 
 
 class Email(Text):

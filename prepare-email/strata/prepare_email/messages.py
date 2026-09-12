@@ -27,7 +27,7 @@ from collections import Counter
 from pathlib import Path
 from typing import ClassVar, Iterable
 
-from strata.catalog.preparers import Prepared, Preparer
+from strata.catalog.types.preparers import Prepared, Preparer
 from strata.labels import Span, Spans
 
 from ._writing import write_document

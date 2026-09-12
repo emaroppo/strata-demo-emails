@@ -21,7 +21,7 @@ from email.parser import BytesParser
 from pathlib import Path
 from typing import ClassVar, Iterable
 
-from strata.catalog.preparers import Prepared, Preparer, PreparerError
+from strata.catalog.types.preparers import Prepared, Preparer, PreparerError
 
 from ._writing import write_document
 

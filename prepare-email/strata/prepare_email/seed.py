@@ -27,7 +27,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from strata.catalog.prepared import PreparedIndex
+from strata.catalog.types.prepared import PreparedIndex
 
 
 def choose(samples: dict, size: int, per_class: int, rng) -> list[str]:
@@ -71,8 +71,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     from strata.catalog import CatalogError
-    from strata.catalog.blobs import checksum_of
     from strata.catalog.config import load_catalogs, open_catalog
+    from strata.catalog.storage.blobs import checksum_of
     from strata.labeller.project import Project
 
     project = Project.load(args.project)

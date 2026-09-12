@@ -19,7 +19,7 @@ import hashlib
 import re
 from pathlib import Path
 
-from strata.catalog.preparers import Prepared
+from strata.catalog.types.preparers import Prepared
 
 from .types import Email
 
