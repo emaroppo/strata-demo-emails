@@ -118,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
         if not path.exists():
             missing += 1
             continue
-        row = catalog.by_checksum(checksum_of(path))
+        row = catalog.samples.by_checksum(checksum_of(path))
         if row is None:
             missing += 1
             continue
