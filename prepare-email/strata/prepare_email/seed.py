@@ -110,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
     except CatalogError as e:
         print(e, file=sys.stderr)
         return 1
-    label_set_id, _schema = catalog.label_set(project.label_set_name)
+    label_set_id, _schema = catalog.label_sets.get(project.label_set_name)
 
     items, missing = [], 0
     for name in chosen:
