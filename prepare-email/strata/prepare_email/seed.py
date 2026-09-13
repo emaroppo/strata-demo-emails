@@ -80,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
     if index is None:
         print(
             f"No prepared corpus under {project.data_dir}; run "
-            f"'auto-labeller prepare' first.",
+            f"'strata-labeller prepare' first.",
             file=sys.stderr,
         )
         return 1
