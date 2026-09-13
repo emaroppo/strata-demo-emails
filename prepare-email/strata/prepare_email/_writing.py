@@ -38,9 +38,7 @@ def canonical(text: str) -> bytes:
     return Email().canonicalise(text.encode("utf-8"))
 
 
-def write_document(
-    out_dir: Path, stem: str, text: str, metadata: dict, value=None, group_id=None
-) -> Prepared:
+def write_document(out_dir: Path, stem: str, text: str, metadata: dict, value=None) -> Prepared:
     """One document, named for what it says rather than where it sat."""
     data = canonical(text)
     digest = hashlib.sha256(data).hexdigest()[:DIGEST_CHARS]
@@ -49,7 +47,6 @@ def write_document(
     return Prepared(
         path=path,
         metadata={**metadata, "characters": len(data.decode("utf-8"))},
-        group_id=group_id,
         value=value,
     )
 
