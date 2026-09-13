@@ -67,6 +67,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--size", type=int, default=400, help="Messages in the seed")
     parser.add_argument("--per-class", type=int, default=25, help="Minimum per class")
     parser.add_argument("--random-seed", type=int, default=0)
+    parser.add_argument(
+        "--batch",
+        default=None,
+        help="A name for this import, recorded on each label (default: seed-<random seed>)",
+    )
     parser.add_argument("--apply", action="store_true", help="Write; otherwise report only")
     args = parser.parse_args(argv)
 
@@ -127,8 +132,11 @@ def main(argv: list[str] | None = None) -> int:
     # Not "human": nobody has looked at these. That distinction is the only
     # thing separating a reviewed label from a regex's guess, and an export
     # overwrites it with "human" the moment someone submits the task.
-    written = catalog.annotations.annotate_many(label_set_id, items, source="import")
-    print(f"\nSeeded {written.annotated:,} annotation(s) as source='import'")
+    batch = args.batch or f"seed-{args.random_seed}"
+    written = catalog.annotations.annotate_many(
+        label_set_id, items, source="import", batch=batch
+    )
+    print(f"\nSeeded {written.annotated:,} annotation(s) as source='import', batch {batch!r}")
     if written.kept:
         # Running the seed again after a review pass is the case this is
         # for: the reviewer's answers stand, and the guesses they replaced
