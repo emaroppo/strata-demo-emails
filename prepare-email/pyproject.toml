@@ -12,17 +12,12 @@ dependencies = [
     "strata-labels>=0.1,<0.2",
 ]
 
-# Seeding a corpus that arrived with candidate spans needs a project and a
-# configured catalog, which is the CLI's business rather than this one's.
 [project.optional-dependencies]
-seed = ["strata-labeller>=0.1,<0.2"]
 test = ["pytest>=8.0", "strata-catalog[test]>=0.1,<0.2"]
 
-[project.scripts]
-# Only importable with the seed extra.
-strata-seed-email = "strata.prepare_email.seed:main"
-
-# What this adds to a catalog: one sample type, and two ways into it.
+# What this adds to a catalog: one sample type, and two ways into it. The
+# candidate spans a converted corpus carries land when it is ingested,
+# like any prepared corpus's labels; nothing here writes to a catalog.
 [project.entry-points."strata.sample_types"]
 email = "strata.prepare_email.types:Email"
 
@@ -33,7 +28,6 @@ email-json = "strata.prepare_email.messages:MessagesPreparer"
 [tool.uv.sources]
 strata-catalog = { workspace = true }
 strata-labels = { workspace = true }
-strata-labeller = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

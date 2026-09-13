@@ -7,7 +7,6 @@ the standard library's mail parser.
 
 ```bash
 uv add strata-prepare-email
-uv add "strata-prepare-email[seed]"      # strata-seed-email; pulls in strata-labeller
 ```
 
 ## What it adds
@@ -24,20 +23,11 @@ body keeps its offsets. Threads are not grouped yet.
 
 A prepared corpus is a directory of documents and a `prepared.json` index
 of what the conversion knew: sender, subject, date, and any candidate
-annotation the corpus arrived with. `ingest` then catalogues it.
-
-## Seeding
-
-`strata-seed-email` lands a prepared corpus's candidate spans, from regexes
-or another model, as a starting point for a review queue. They go in under
-the `import` source, never as something a person said, and the selection
-is stratified over classes with a random remainder, so the first rounds
-see every class and validation is not drawn from the same distortion.
-
-```bash
-strata-seed-email --project projects/my-emails          # report
-strata-seed-email --project projects/my-emails --apply
-```
+annotation the corpus arrived with. `ingest` then catalogues it, and lands
+those candidate spans in the same pass as an import batch — trusted and
+trained on, never as something a person said, and spot-reviewed with
+`push --review-imports` where the model disagrees with them. Nothing in
+this package writes to a catalog.
 
 ## Tests
 
