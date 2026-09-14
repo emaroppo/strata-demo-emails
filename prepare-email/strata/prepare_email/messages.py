@@ -33,13 +33,11 @@ from strata.labels import Span, Spans
 
 from ._writing import write_document
 
-#: Messages longer than this are not converted at all. The figure is the
-#: character equivalent of about a thousand tokens, and it is a compromise
-#: worth naming as one: it lets a model's window decide what the durable
-#: asset contains, which is the relationship this architecture otherwise
-#: puts the other way round. Accepted for a first pass over a corpus whose
-#: labels are known to be poor — the source is kept, so raising it is a
-#: re-run rather than a loss.
+#: Messages longer than this are not converted. An arbitrary limit, and a
+#: first-pass compromise: a number chosen at conversion decides what the
+#: durable asset holds, the reverse of the architecture's stance. The
+#: source is kept, so raising it is a re-run rather than a loss
+#: (``docs/adr/0033``).
 DEFAULT_MAX_CHARS = 4000
 
 
