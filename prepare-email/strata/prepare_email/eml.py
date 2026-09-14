@@ -59,8 +59,6 @@ class EmlPreparer(Preparer):
         # Decoded through the part's declared charset, which is exactly the
         # step Text.canonicalise refuses to guess at
         text = body.get_content()
-        metadata = {
-            name: str(message[header] or "") for header, name in HEADERS.items()
-        }
+        metadata = {name: str(message[header] or "") for header, name in HEADERS.items()}
         metadata["source_file"] = Path(source).name
         yield write_document(out_dir, Path(source).stem, text, metadata)

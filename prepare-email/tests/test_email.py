@@ -102,8 +102,7 @@ def test_the_headers_are_recorded_on_the_sample(mailbox, tmp_path):
 def test_a_message_with_no_plain_part_is_refused(tmp_path):
     html = tmp_path / "fancy.eml"
     html.write_bytes(
-        b'Subject: Fancy\r\nContent-Type: text/html; charset="utf-8"\r\n\r\n'
-        b"<p>Ada Lovelace</p>\r\n"
+        b'Subject: Fancy\r\nContent-Type: text/html; charset="utf-8"\r\n\r\n<p>Ada Lovelace</p>\r\n'
     )
     # Offsets into markup are not offsets into anything a reviewer reads,
     # and rendering it is a different conversion
@@ -119,9 +118,7 @@ def test_two_mailboxes_with_one_name_do_not_collide(tmp_path):
             b'Subject: x\r\nContent-Type: text/plain; charset="utf-8"\r\n\r\n' + body
         )
     out = tmp_path / "out"
-    index = run(
-        EmlPreparer(), [first / "inbox.eml", second / "inbox.eml"], out
-    )
+    index = run(EmlPreparer(), [first / "inbox.eml", second / "inbox.eml"], out)
     # A name derived from the source alone would have the second silently
     # overwrite the first
     assert len(index.samples) == 2

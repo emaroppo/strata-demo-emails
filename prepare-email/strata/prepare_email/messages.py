@@ -129,9 +129,7 @@ class MessagesPreparer(Preparer):
                     # nearly right is worse than one that is missing.
                     self._counts["dropped_unmappable"] += 1
                     continue
-                found.append(
-                    Span(labels=[label], start=moved_start, end=moved_end, text=wanted)
-                )
+                found.append(Span(labels=[label], start=moved_start, end=moved_end, text=wanted))
                 self._counts[f"span_{label}"] += 1
         return sorted(found, key=lambda s: (s.start, s.end))
 
