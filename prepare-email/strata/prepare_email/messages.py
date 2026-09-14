@@ -24,8 +24,9 @@ longer slices to what it claims is dropped and counted.
 import json
 import unicodedata
 from collections import Counter
+from collections.abc import Iterable
 from pathlib import Path
-from typing import ClassVar, Iterable
+from typing import ClassVar
 
 from strata.catalog.types.preparers import Prepared, Preparer
 from strata.labels import Span, Spans

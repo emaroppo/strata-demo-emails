@@ -16,10 +16,11 @@ different kind of document in the corpus. A converter that could do it
 properly is a second preparer, not a branch in this one.
 """
 
+from collections.abc import Iterable
 from email import policy
 from email.parser import BytesParser
 from pathlib import Path
-from typing import ClassVar, Iterable
+from typing import ClassVar
 
 from strata.catalog.types.preparers import Prepared, Preparer, PreparerError
 
