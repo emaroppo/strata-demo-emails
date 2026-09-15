@@ -32,7 +32,9 @@ this package writes to a catalog.
 ## Tests
 
 ```bash
-uv run pytest packages/prepare-email
+uv run pytest prepare-email     # from the emails demo project, whose plugin this is
 ```
+
+Inside the strata workspace: `uv run pytest packages/prepare-email` from its root.
 
 Includes the catalog's `PreparerContract`, run against both preparers.
