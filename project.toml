@@ -1,0 +1,36 @@
+name = "emails"
+
+[label_set]
+task = "span"
+classes = ["PER", "ORG", "LOC", "DATE", "EMAIL", "PHONE", "URL", "ATTACHMENT"]
+
+[data]
+root = "data/raw"  # files live here; may be an absolute path
+type = "text"  # a registered sample type; see 'auto-labeller types'
+
+[catalog]
+name = "emails"
+# One collection per corpus, so the held-out one can be added later
+# without disturbing this one.
+collections = ["emails/dnc"]
+
+[model]
+ref = "text-span"
+
+[model.params]
+num_epochs = 4
+batch_size = 8
+lr = 5e-5
+# Windowing is off by default because the right answer for a document past
+# the encoder's limit depends on the corpus. Email needs it: the tail of a
+# long message carries as many entities as the head, and on a message of
+# 891 tokens truncation supervised 8 of 12 spans where windowing supervised
+# all 12.
+window = 512
+
+# Applied over the above when a round has nothing to continue
+# from. A cold start on an increment's schedule undertrains,
+# and the result then reads as a baseline.
+[model.fresh_params]
+num_epochs = 40
+

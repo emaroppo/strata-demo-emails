@@ -1,0 +1,31 @@
+# Where things are, on this machine. Committed rather than gitignored because
+# this demo's answer is "nothing installed": a SQLite index and a directory of
+# blobs under the checkout, so a fresh clone runs the loop with no database,
+# no object store and no GPU.
+#
+# A host with a real catalog keeps its own file elsewhere and names it in
+# $STRATA_CONFIG, which a command reads before this one; this file is what a
+# stranger's checkout runs from.
+
+[catalog]
+default = "emails"
+
+# Named rather than left as the host's default, and project.toml names it
+# back: a demo has to be able to show what a catalog is, and this one owns
+# one instead of borrowing a corner of somebody else's.
+[catalog.emails]
+root = "catalog"
+# Empty: SQLite under root. Point at Postgres to share the index.
+url = ""
+# Empty: files under root. An endpoint means tar shards in a bucket.
+s3_endpoint = ""
+
+# Training happens in this process. A URL sends rounds to a host with the
+# GPU; the token comes from $STRATA_MODELLING_TOKEN, never from here.
+[modelling]
+url = ""
+
+# A Label Studio for the review step, if there is one. Optional: ingest,
+# train and report work without it.
+[label_studio]
+url = "http://localhost:8080"

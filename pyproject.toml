@@ -1,0 +1,54 @@
+# The emails demo: a strata project directory, and the environment it runs
+# in. Not a package: nothing here is built or installed, so uv keeps only
+# the environment (package = false).
+[project]
+name = "strata-demo-emails"
+version = "0.1.0"
+description = "Named entities in mail: a strata project whose corpus arrives as .eml, with the converter as its own plugin"
+requires-python = ">=3.13"
+dependencies = [
+    # The labelling loop, and through it the catalog, modelling and the job.
+    "strata-labeller",
+    # This project's own plugin: the email sample type and the two preparers,
+    # in prepare-email/ beside this file, registered through the catalog's
+    # entry points like any plugin written outside strata.
+    "strata-prepare-email",
+]
+
+[project.optional-dependencies]
+# The span tagger's framework. Left out of the base install so a host that
+# only prepares and ingests carries no torch.
+model = ["strata-modelling[text]"]
+# Running an experiment file over this project.
+experiment = ["strata-experiment"]
+
+[tool.uv]
+package = false
+
+# Until the strata packages are on an index they come from their
+# repositories; the plugin comes from beside this file.
+[tool.uv.sources]
+strata-prepare-email = { path = "prepare-email", editable = true }
+strata-labels = { git = "http://192.168.2.149:3000/em/strata-labels.git", branch = "main" }
+strata-common = { git = "http://192.168.2.149:3000/em/strata-common.git", branch = "main" }
+strata-catalog = { git = "http://192.168.2.149:3000/em/strata-catalog.git", branch = "main" }
+strata-modelling = { git = "http://192.168.2.149:3000/em/strata-modelling.git", branch = "main" }
+strata-project = { git = "http://192.168.2.149:3000/em/strata-project.git", branch = "main" }
+strata-labeller = { git = "http://192.168.2.149:3000/em/strata-labeller.git", branch = "main" }
+strata-experiment = { git = "http://192.168.2.149:3000/em/strata-experiment.git", branch = "main" }
+
+[dependency-groups]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[tool.pytest.ini_options]
+testpaths = ["prepare-email/tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "SIM", "DTZ", "UP", "C4", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["strata"]

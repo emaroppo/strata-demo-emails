@@ -1,0 +1,22 @@
+# The corpus. Somebody's mail, however public: fetched by hand, never vendored.
+/data/
+# What the conversion knew about it, and the candidate spans it arrived with.
+/spans.json
+# The local catalog: the SQLite index and the blobs beside it.
+/catalog/
+/catalog-*/
+# Project payload: outputs, not sources.
+datasets/
+runs/
+checkpoints/
+.state/
+# A real host's file, if one is kept beside this checkout.
+config.local.toml
+config.*.local.toml
+.env
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+uv.lock
