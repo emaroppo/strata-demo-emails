@@ -13,6 +13,14 @@ dependencies = [
     # in prepare-email/ beside this file, registered through the catalog's
     # entry points like any plugin written outside strata.
     "strata-prepare-email",
+    # Named here although the labeller brings them: uv applies a source only
+    # to a direct dependency, and until these are on an index each needs
+    # its source below.
+    "strata-labels",
+    "strata-common",
+    "strata-catalog",
+    "strata-modelling",
+    "strata-project",
 ]
 
 [project.optional-dependencies]
@@ -26,7 +34,7 @@ experiment = ["strata-experiment"]
 package = false
 
 # Until the strata packages are on an index they come from their
-# repositories; the plugin comes from beside this file.
+# repositories, at main; the plugin comes from beside this file.
 [tool.uv.sources]
 strata-prepare-email = { path = "prepare-email", editable = true }
 strata-labels = { git = "http://192.168.2.149:3000/em/strata-labels.git", branch = "main" }
