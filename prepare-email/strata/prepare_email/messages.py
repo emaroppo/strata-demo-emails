@@ -4,21 +4,14 @@ The shape this reads is one a mail corpus is commonly handed over in: a list
 of records, each holding messages, each message a body, some headers and
 whatever entity extraction had already been run over it.
 
-**The spans it carries are candidates.** They come from regexes and an
-off-the-shelf model, and they arrive with a validation flag saying nobody
-checked them. They travel in the prepared index rather than into the
-catalog, and landing them is a separate, deliberate step under a source of
-its own — the distinction between a guess and an answer is the only thing
-the whole loop is about.
+**The spans it carries are candidates.** They travel in the prepared index,
+and landing them is a separate step under a source of its own
+(``docs/adr/0028``).
 
-**Offsets are remapped, not trusted.** The body as stored is canonical:
-CRLF becomes LF, so every character after a line ending in one of those
-documents sits one place earlier than the source JSON says. A span carried
-across without remapping still validates, still trains, and points at the
-wrong characters — which is exactly the class of silent fault the canonical
-form exists to prevent. So each span is moved through the same
-transformation and then checked against its own text; anything that no
-longer slices to what it claims is dropped and counted.
+**Offsets are remapped, not trusted.** Each span is moved through the same
+transformation as the text and checked against its own text; anything that
+no longer slices to what it claims is dropped and counted
+(``docs/adr/0033``).
 """
 
 import json
@@ -78,10 +71,8 @@ class MessagesPreparer(Preparer):
         spans = self._spans(message, body, text, where)
         headers = message.get("headers") or {}
         metadata = {
-            # The join key that keeps ingesting the same mail as .eml
-            # possible later: a second format produces different bytes and
-            # therefore different samples, and this is what would carry the
-            # review work across.
+            # The join key for the same mail ingested in another format.
+            # docs/adr/0010
             "message_id": headers.get("Message-ID") or headers.get("Message-Id") or "",
             "subject": headers.get("Subject") or "",
             "from": headers.get("From") or "",
@@ -122,9 +113,8 @@ class MessagesPreparer(Preparer):
                 moved_start, moved_end = where[start], where[end]
                 wanted = _canonical(str(claimed))
                 if text[moved_start:moved_end] != wanted:
-                    # Survived the source and did not survive the mapping.
-                    # Dropped rather than stored askew: an offset that is
-                    # nearly right is worse than one that is missing.
+                    # Survived the source and not the mapping: dropped rather
+                    # than stored askew. docs/adr/0033
                     self._counts["dropped_unmappable"] += 1
                     continue
                 found.append(Span(labels=[label], start=moved_start, end=moved_end, text=wanted))

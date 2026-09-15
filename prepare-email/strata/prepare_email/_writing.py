@@ -1,18 +1,9 @@
 """What both conversions share: how a document is named and written.
 
-Names are content-addressed, with a readable stem in front. Two properties
-matter and neither is cosmetic.
-
-*Stable.* Converting the same message twice writes the same filename with
-the same bytes, so re-running over a source directory that has grown leaves
-everything already catalogued exactly where it was. A name carrying a
-position in a corpus does not have that property: one message inserted
-renames everything after it, and every renamed file re-ingests as a new
-sample with no annotations.
-
-*Unique.* Two mailboxes both holding ``inbox.eml`` write different
-documents, and a name derived from the source alone would have the second
-silently overwrite the first.
+Names are content-addressed, with a readable stem in front: stable, so the
+same message always writes the same filename with the same bytes
+(``docs/adr/0033``), and unique, so two mailboxes both holding
+``inbox.eml`` do not have the second overwrite the first.
 """
 
 import hashlib
@@ -31,9 +22,7 @@ DIGEST_CHARS = 12
 def canonical(text: str) -> bytes:
     """The bytes to write: UTF-8, LF endings, NFC, no BOM.
 
-    Canonical here rather than at ingest, so the file on disk and the sample
-    in the catalog have the same checksum — otherwise the corpus no longer
-    says what was catalogued.
+    Canonical here rather than at ingest. See ``docs/adr/0033``.
     """
     return Email().canonicalise(text.encode("utf-8"))
 

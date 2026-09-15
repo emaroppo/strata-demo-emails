@@ -4,9 +4,8 @@ A sample type saying what the catalog stores — one message body, as
 characters — and two conversions into it: individual ``.eml`` files, and the
 message JSON a corpus is often handed over as.
 
-Its own distribution because that is what a preparer should be. Nothing here
-is imported by the catalog; it is discovered through entry points, and a
-checkout that has no mail to convert installs none of it.
+Its own distribution, discovered through entry points; the catalog imports
+none of it. See ``docs/adr/0010``.
 """
 
 from .types import Email
