@@ -1,4 +1,4 @@
-"""What the catalog stores when the corpus is mail.
+"""What a catalog takes when the corpus is mail.
 
 One sample is one message body, as characters; headers are metadata, so
 no offset moves. Threads are not grouped yet. See ``docs/adr/0010``.
@@ -6,7 +6,7 @@ no offset moves. Threads are not grouped yet. See ``docs/adr/0010``.
 
 from typing import ClassVar
 
-from strata.catalog.types.builtin_types import Text
+from strata.contracts import Text
 
 
 class Email(Text):

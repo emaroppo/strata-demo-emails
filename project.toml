@@ -6,7 +6,7 @@ classes = ["PER", "ORG", "LOC", "DATE", "EMAIL", "PHONE", "URL", "ATTACHMENT"]
 
 [data]
 root = "data/raw"  # files live here; may be an absolute path
-type = "text"  # a registered sample type; see 'auto-labeller types'
+type = "email"  # a registered sample type; see 'strata-catalog types'
 
 [catalog]
 name = "emails"

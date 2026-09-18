@@ -12,7 +12,7 @@ from email.parser import BytesParser
 from pathlib import Path
 from typing import ClassVar
 
-from strata.catalog.types.preparers import Prepared, Preparer, PreparerError
+from strata.prepare import Prepared, Preparer, PreparerError
 
 from ._writing import write_document
 
@@ -34,7 +34,7 @@ class EmlPreparer(Preparer):
     produces: ClassVar[str] = "email"
     sources: ClassVar[frozenset[str]] = frozenset({"eml"})
 
-    def prepare(self, source: Path, out_dir: Path) -> Iterable[Prepared]:
+    def prepare(self, source: Path, out_dir: Path, *, root: Path) -> Iterable[Prepared]:
         message = BytesParser(policy=policy.default).parsebytes(Path(source).read_bytes())
         body = message.get_body(preferencelist=("plain",))
         if body is None:

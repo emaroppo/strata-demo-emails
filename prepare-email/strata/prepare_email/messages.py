@@ -21,8 +21,8 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import ClassVar
 
-from strata.catalog.types.preparers import Prepared, Preparer
 from strata.contracts import Span, Spans
+from strata.prepare import Prepared, Preparer
 
 from ._writing import write_document
 
@@ -48,7 +48,7 @@ class MessagesPreparer(Preparer):
     def report(self) -> dict[str, int]:
         return dict(self._counts)
 
-    def prepare(self, source: Path, out_dir: Path) -> Iterable[Prepared]:
+    def prepare(self, source: Path, out_dir: Path, *, root: Path) -> Iterable[Prepared]:
         records = json.loads(Path(source).read_text(encoding="utf-8"))
         for record in records:
             for message in record.get("messages", []):

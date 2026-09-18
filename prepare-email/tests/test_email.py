@@ -12,9 +12,9 @@ import json
 
 import pytest
 
-from strata.catalog.types.prepared import PreparedIndex
-from strata.catalog.types.preparer_conformance import PreparerContract
-from strata.catalog.types.preparers import PreparerError, run
+from strata.prepare import PreparerError, load_index, run
+from strata.prepare.conformance import PreparerContract
+from strata.prepare_email._writing import canonical
 from strata.prepare_email.eml import EmlPreparer
 from strata.prepare_email.messages import MessagesPreparer
 from strata.prepare_email.types import Email
@@ -65,8 +65,19 @@ def test_mail_is_text_with_a_subtype_of_its_own():
     assert Email.subtype() == "email"
 
 
-def test_mail_has_the_canonical_form_documents_have():
-    assert Email.canonicalises()
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("a\r\nb", b"a\nb"),
+        ("a\rb", b"a\nb"),
+        ("\ufeffhello", b"hello"),
+        ("cafe\u0301", "caf\u00e9".encode()),
+    ],
+)
+def test_mail_is_written_in_the_form_a_catalog_stores_text_in(text, expected):
+    # The spans ride on these characters, and a catalog refuses a span on
+    # bytes it would rewrite
+    assert canonical(text) == expected
 
 
 # ----------------------------------------------------------------------
@@ -219,7 +230,7 @@ def test_the_candidates_survive_the_index_being_written(source, tmp_path):
     records = corpus(entities={"PER": [["Ada Lovelace", 13, 25]]})
     out = tmp_path / "out"
     run(MessagesPreparer(), [source(records)], out)
-    back = PreparedIndex.load(out)
+    back = load_index(out)
     [entry] = back.samples.values()
     assert entry.value.values[0].labels == ["PER"]
 

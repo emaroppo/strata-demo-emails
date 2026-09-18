@@ -4,18 +4,18 @@ version = "0.1.0"
 description = "Mail into a catalog: the email sample type, and converters from .eml and message JSON"
 readme = "README.md"
 requires-python = ">=3.13"
-# Only the catalog, and the standard library's own mail parser. A plugin
-# that made this expensive to install would be a poor advertisement for
-# preparers being plugins at all.
+# Only the preparer framework and the types, and the standard library's own
+# mail parser. A plugin that made this expensive to install would be a poor
+# advertisement for preparers being plugins at all.
 dependencies = [
-    "strata-catalog>=0.1,<0.2",
+    "strata-prepare>=0.1,<0.2",
     "strata-contracts>=0.1,<0.2",
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8.0", "strata-catalog[test]>=0.1,<0.2"]
+test = ["pytest>=8.0", "strata-prepare[test]>=0.1,<0.2"]
 
-# What this adds to a catalog: one sample type, and two ways into it. The
+# What this adds: one sample type, and two ways into it. The
 # candidate spans a converted corpus carries land when it is ingested,
 # like any prepared corpus's labels; nothing here writes to a catalog.
 [project.entry-points."strata.sample_types"]

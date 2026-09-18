@@ -8,11 +8,10 @@ same message always writes the same filename with the same bytes
 
 import hashlib
 import re
+import unicodedata
 from pathlib import Path
 
-from strata.catalog.types.preparers import Prepared
-
-from .types import Email
+from strata.prepare import Prepared
 
 #: Long enough that a collision needs billions of documents, short enough
 #: that a human can still read the stem in front of it.
@@ -22,9 +21,13 @@ DIGEST_CHARS = 12
 def canonical(text: str) -> bytes:
     """The bytes to write: UTF-8, LF endings, NFC, no BOM.
 
-    Canonical here rather than at ingest. See ``docs/adr/0033``.
+    The form a catalog stores text in, written here rather than left to
+    ingest, because the candidate spans this corpus carries address these
+    characters: a catalog refuses a span on bytes it would rewrite. See
+    ``docs/adr/0040``.
     """
-    return Email().canonicalise(text.encode("utf-8"))
+    text = text.removeprefix("\ufeff").replace("\r\n", "\n").replace("\r", "\n")
+    return unicodedata.normalize("NFC", text).encode("utf-8")
 
 
 def write_document(out_dir: Path, stem: str, text: str, metadata: dict, value=None) -> Prepared:

@@ -10,8 +10,8 @@ dependencies = [
     # The labelling loop, and through it the catalog, modelling and the job.
     "strata-labeller",
     # This project's own plugin: the email sample type and the two preparers,
-    # in prepare-email/ beside this file, registered through the catalog's
-    # entry points like any plugin written outside strata.
+    # in prepare-email/ beside this file, registered through strata's entry
+    # points like any plugin written outside strata.
     "strata-prepare-email",
     # Named here although the labeller brings them: uv applies a source only
     # to a direct dependency, and until these are on an index each needs
@@ -19,6 +19,7 @@ dependencies = [
     "strata-contracts",
     "strata-common",
     "strata-catalog",
+    "strata-prepare",
     "strata-modelling",
     "strata-project",
 ]
@@ -40,6 +41,7 @@ strata-prepare-email = { path = "prepare-email", editable = true }
 strata-contracts = { git = "http://192.168.2.149:3000/em/strata-contracts.git", branch = "main" }
 strata-common = { git = "http://192.168.2.149:3000/em/strata-common.git", branch = "main" }
 strata-catalog = { git = "http://192.168.2.149:3000/em/strata-catalog.git", branch = "main" }
+strata-prepare = { git = "http://192.168.2.149:3000/em/strata-prepare.git", branch = "main" }
 strata-modelling = { git = "http://192.168.2.149:3000/em/strata-modelling.git", branch = "main" }
 strata-project = { git = "http://192.168.2.149:3000/em/strata-project.git", branch = "main" }
 strata-labeller = { git = "http://192.168.2.149:3000/em/strata-labeller.git", branch = "main" }
