@@ -16,7 +16,7 @@ dependencies = [
     # Named here although the labeller brings them: uv applies a source only
     # to a direct dependency, and until these are on an index each needs
     # its source below.
-    "strata-labels",
+    "strata-contracts",
     "strata-common",
     "strata-catalog",
     "strata-modelling",
@@ -37,7 +37,7 @@ package = false
 # repositories, at main; the plugin comes from beside this file.
 [tool.uv.sources]
 strata-prepare-email = { path = "prepare-email", editable = true }
-strata-labels = { git = "http://192.168.2.149:3000/em/strata-labels.git", branch = "main" }
+strata-contracts = { git = "http://192.168.2.149:3000/em/strata-contracts.git", branch = "main" }
 strata-common = { git = "http://192.168.2.149:3000/em/strata-common.git", branch = "main" }
 strata-catalog = { git = "http://192.168.2.149:3000/em/strata-catalog.git", branch = "main" }
 strata-modelling = { git = "http://192.168.2.149:3000/em/strata-modelling.git", branch = "main" }

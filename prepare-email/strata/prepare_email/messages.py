@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from strata.catalog.types.preparers import Prepared, Preparer
-from strata.labels import Span, Spans
+from strata.contracts import Span, Spans
 
 from ._writing import write_document
 
