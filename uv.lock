@@ -85,12 +85,12 @@ name = "black"
 version = "26.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "click" },
-    { name = "mypy-extensions" },
-    { name = "packaging" },
-    { name = "pathspec" },
-    { name = "platformdirs" },
-    { name = "pytokens" },
+    { name = "click", marker = "python_full_version < '3.14' or sys_platform != 'emscripten'" },
+    { name = "mypy-extensions", marker = "python_full_version < '3.14' or sys_platform != 'emscripten'" },
+    { name = "packaging", marker = "python_full_version < '3.14' or sys_platform != 'emscripten'" },
+    { name = "pathspec", marker = "python_full_version < '3.14' or sys_platform != 'emscripten'" },
+    { name = "platformdirs", marker = "python_full_version < '3.14' or sys_platform != 'emscripten'" },
+    { name = "pytokens", marker = "python_full_version < '3.14' or sys_platform != 'emscripten'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c0/37/5628dd55bf2b34257fc7603f0fe97c40e3aaf24265f416a9c85c95ca1436/black-26.5.1.tar.gz", hash = "sha256:dd321f668053961824bcc1be1cc1df748b2d7e4fa28086b08331e577b0100a73", size = 679439, upload-time = "2026-05-18T16:53:36.107Z" }
 wheels = [
@@ -263,7 +263,7 @@ name = "cuda-bindings"
 version = "13.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cuda-pathfinder" },
+    { name = "cuda-pathfinder", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/38/cf/165b4d449f94956c2a60930cf5dfeb27132ead60a7e7f2c37819df1cba07/cuda_bindings-13.4.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:b601c0cbf0dffb648f68e56a60b320738a20210293f33896a1964a6438cc65f1", size = 6313772, upload-time = "2026-09-10T01:17:03.969Z" },
@@ -292,43 +292,43 @@ wheels = [
 
 [package.optional-dependencies]
 cublas = [
-    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
-    { name = "nvidia-cuda-nvrtc", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-cublas", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "nvidia-cuda-nvrtc", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 cudart = [
-    { name = "nvidia-cuda-runtime", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-cuda-runtime", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 cufft = [
-    { name = "nvidia-cufft", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
-    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-cufft", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 cufile = [
     { name = "nvidia-cufile", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 cupti = [
-    { name = "nvidia-cuda-cupti", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-cuda-cupti", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 curand = [
-    { name = "nvidia-curand", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-curand", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 cusolver = [
-    { name = "nvidia-cublas", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
-    { name = "nvidia-cusolver", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
-    { name = "nvidia-cusparse", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
-    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-cublas", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "nvidia-cusolver", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "nvidia-cusparse", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 cusparse = [
-    { name = "nvidia-cusparse", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
-    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-cusparse", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 nvjitlink = [
-    { name = "nvidia-nvjitlink", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 nvrtc = [
-    { name = "nvidia-cuda-nvrtc", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-cuda-nvrtc", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 nvtx = [
-    { name = "nvidia-nvtx", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32')" },
+    { name = "nvidia-nvtx", marker = "(python_full_version < '3.14' and platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 
 [[package]]
@@ -989,7 +989,7 @@ name = "nvidia-cublas"
 version = "13.1.1.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cuda-nvrtc" },
+    { name = "nvidia-cuda-nvrtc", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a7/a1/0bd24ee8c8d03adac032fd2909426a00c88f8c57961b1277ded97f91119f/nvidia_cublas-13.1.1.3-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:b7a210458267ac818974c53038fbec2e969d5c99f305ab15c72522fa9f001dd5", size = 542848918, upload-time = "2026-04-08T18:46:22.985Z" },
@@ -1028,7 +1028,7 @@ name = "nvidia-cudnn-cu13"
 version = "9.24.0.43"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas" },
+    { name = "nvidia-cublas", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ca/30/7c257e3d5cb4fecb147b93895c66e29c93f8e76d74b45bb418ff0587c4ec/nvidia_cudnn_cu13-9.24.0.43-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:a6812a554a1ff0413e9c52b84c26c050380649ab9615f9c16bded368ce9f421f", size = 650976863, upload-time = "2026-07-02T16:23:39.248Z" },
@@ -1040,7 +1040,7 @@ name = "nvidia-cufft"
 version = "12.0.0.61"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink" },
+    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/ae/f417a75c0259e85c1d2f83ca4e960289a5f814ed0cea74d18c353d3e989d/nvidia_cufft-12.0.0.61-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:2708c852ef8cd89d1d2068bdbece0aa188813a0c934db3779b9b1faa8442e5f5", size = 214053554, upload-time = "2025-09-04T08:31:38.196Z" },
@@ -1070,9 +1070,9 @@ name = "nvidia-cusolver"
 version = "12.0.4.66"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas" },
-    { name = "nvidia-cusparse" },
-    { name = "nvidia-nvjitlink" },
+    { name = "nvidia-cublas", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
+    { name = "nvidia-cusparse", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
+    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/c3/b30c9e935fc01e3da443ec0116ed1b2a009bb867f5324d3f2d7e533e776b/nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:02c2457eaa9e39de20f880f4bd8820e6a1cfb9f9a34f820eb12a155aa5bc92d2", size = 223467760, upload-time = "2025-09-04T08:33:04.222Z" },
@@ -1084,7 +1084,7 @@ name = "nvidia-cusparse"
 version = "12.6.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink" },
+    { name = "nvidia-nvjitlink", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f8/94/5c26f33738ae35276672f12615a64bd008ed5be6d1ebcb23579285d960a9/nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:80bcc4662f23f1054ee334a15c72b8940402975e0eab63178fc7e670aa59472c", size = 162155568, upload-time = "2025-09-04T08:33:42.864Z" },
@@ -1832,23 +1832,32 @@ wheels = [
 [[package]]
 name = "strata-catalog"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main#db532f0fde9aa5abd11d7e88242a6de3b4dca4d3" }
+source = { git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main#ac59c08bf239a1a68382960c810b60c98d1cc85f" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
     { name = "strata-common", extra = ["migrations"] },
-    { name = "strata-labels" },
+    { name = "strata-contracts" },
 ]
 
 [[package]]
 name = "strata-common"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-common.git?branch=main#c019315fe3ccb77f965113f223f040498764323a" }
+source = { git = "http://192.168.2.149:3000/em/strata-common.git?branch=main#13c2c1b786f3e9251d8fb75c2c9476fec2ab62db" }
 
 [package.optional-dependencies]
 migrations = [
     { name = "alembic" },
     { name = "sqlalchemy" },
+]
+
+[[package]]
+name = "strata-contracts"
+version = "0.1.0"
+source = { git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main#8b0071e7122203a48fef2c76b7484bd449e84c58" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "strata-common" },
 ]
 
 [[package]]
@@ -1858,9 +1867,10 @@ source = { virtual = "." }
 dependencies = [
     { name = "strata-catalog" },
     { name = "strata-common" },
+    { name = "strata-contracts" },
     { name = "strata-labeller" },
-    { name = "strata-labels" },
     { name = "strata-modelling" },
+    { name = "strata-prepare" },
     { name = "strata-prepare-email" },
     { name = "strata-project" },
 ]
@@ -1883,11 +1893,12 @@ dev = [
 requires-dist = [
     { name = "strata-catalog", git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main" },
     { name = "strata-common", git = "http://192.168.2.149:3000/em/strata-common.git?branch=main" },
+    { name = "strata-contracts", git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main" },
     { name = "strata-experiment", marker = "extra == 'experiment'", git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main" },
     { name = "strata-labeller", git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main" },
-    { name = "strata-labels", git = "http://192.168.2.149:3000/em/strata-labels.git?branch=main" },
     { name = "strata-modelling", git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main" },
     { name = "strata-modelling", extras = ["text"], marker = "extra == 'model'", git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main" },
+    { name = "strata-prepare", git = "http://192.168.2.149:3000/em/strata-prepare.git?branch=main" },
     { name = "strata-prepare-email", editable = "prepare-email" },
     { name = "strata-project", git = "http://192.168.2.149:3000/em/strata-project.git?branch=main" },
 ]
@@ -1902,12 +1913,12 @@ dev = [
 [[package]]
 name = "strata-experiment"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main#ac54408cb2869113b9397a8e5a35555390d66bac" }
+source = { git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main#dc8f94184cfa762f10393f1ee25082fc1eaa5778" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-catalog" },
     { name = "strata-common" },
-    { name = "strata-labels" },
+    { name = "strata-contracts" },
     { name = "strata-modelling" },
     { name = "strata-project" },
 ]
@@ -1915,34 +1926,27 @@ dependencies = [
 [[package]]
 name = "strata-labeller"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#ce59c20000d259bf2db56b201b5b736b4e75ffeb" }
+source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#e5c532bf839c17fff8933bdc9db8db15efb4c60f" }
 dependencies = [
     { name = "label-studio-sdk" },
     { name = "rich" },
     { name = "strata-catalog" },
-    { name = "strata-labels" },
+    { name = "strata-contracts" },
     { name = "strata-modelling" },
+    { name = "strata-prepare" },
     { name = "strata-project" },
     { name = "typer" },
 ]
 
 [[package]]
-name = "strata-labels"
-version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-labels.git?branch=main#cbed635669365e1bf9b4884c71ba9f7ce06056b1" }
-dependencies = [
-    { name = "pydantic" },
-]
-
-[[package]]
 name = "strata-modelling"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main#e3bb2f24d03417e54f4f87a1c4a3d0b1be89c62a" }
+source = { git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main#21df2a6dfcd5ea593f4e55332f6765e169d4a60f" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
     { name = "strata-common", extra = ["migrations"] },
-    { name = "strata-labels" },
+    { name = "strata-contracts" },
 ]
 
 [package.optional-dependencies]
@@ -1954,20 +1958,29 @@ text = [
 ]
 
 [[package]]
+name = "strata-prepare"
+version = "0.1.0"
+source = { git = "http://192.168.2.149:3000/em/strata-prepare.git?branch=main#fea71367ecc2afda8717bec9e0154028f3bb3b76" }
+dependencies = [
+    { name = "strata-common" },
+    { name = "strata-contracts" },
+]
+
+[[package]]
 name = "strata-prepare-email"
 version = "0.1.0"
 source = { editable = "prepare-email" }
 dependencies = [
-    { name = "strata-catalog" },
-    { name = "strata-labels" },
+    { name = "strata-contracts" },
+    { name = "strata-prepare" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.0" },
-    { name = "strata-catalog", specifier = ">=0.1,<0.2" },
-    { name = "strata-catalog", extras = ["test"], marker = "extra == 'test'", specifier = ">=0.1,<0.2" },
-    { name = "strata-labels", specifier = ">=0.1,<0.2" },
+    { name = "strata-contracts", specifier = ">=0.1,<0.2" },
+    { name = "strata-prepare", specifier = ">=0.1,<0.2" },
+    { name = "strata-prepare", extras = ["test"], marker = "extra == 'test'", specifier = ">=0.1,<0.2" },
 ]
 provides-extras = ["test"]
 
@@ -1981,10 +1994,10 @@ dev = [
 [[package]]
 name = "strata-project"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-project.git?branch=main#2e6b6bd1807c6b6f168e56f2a9b185b402bed4a6" }
+source = { git = "http://192.168.2.149:3000/em/strata-project.git?branch=main#562aa1bba3c5e5a9469b3fe6a57ecc8b9eb7b5ec" }
 dependencies = [
     { name = "strata-catalog" },
-    { name = "strata-labels" },
+    { name = "strata-contracts" },
     { name = "strata-modelling" },
     { name = "tomlkit" },
 ]
