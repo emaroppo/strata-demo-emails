@@ -1832,7 +1832,7 @@ wheels = [
 [[package]]
 name = "strata-catalog"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main#2dcbc22f4788b893c2283cef051240bf59cd074b" }
+source = { git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main#f13f173d556e9d455b6022a0e1ec9885e93c0b9e" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
@@ -1854,7 +1854,7 @@ migrations = [
 [[package]]
 name = "strata-contracts"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main#afaaf00b4f4e45140ca06ff8b52440a8b2c0bd56" }
+source = { git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main#3efbf964a60f8f3d495b5174c4c1f639f696c7b8" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-common" },
@@ -1868,6 +1868,7 @@ dependencies = [
     { name = "strata-catalog" },
     { name = "strata-common" },
     { name = "strata-contracts" },
+    { name = "strata-evaluation" },
     { name = "strata-labeller" },
     { name = "strata-modelling" },
     { name = "strata-prepare" },
@@ -1894,6 +1895,7 @@ requires-dist = [
     { name = "strata-catalog", git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main" },
     { name = "strata-common", git = "http://192.168.2.149:3000/em/strata-common.git?branch=main" },
     { name = "strata-contracts", git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main" },
+    { name = "strata-evaluation", git = "http://192.168.2.149:3000/em/strata-evaluation.git?branch=main" },
     { name = "strata-experiment", marker = "extra == 'experiment'", git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main" },
     { name = "strata-labeller", git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main" },
     { name = "strata-modelling", git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main" },
@@ -1911,9 +1913,17 @@ dev = [
 ]
 
 [[package]]
+name = "strata-evaluation"
+version = "0.1.0"
+source = { git = "http://192.168.2.149:3000/em/strata-evaluation.git?branch=main#8446e8d19d8657828f6088d045dad4ae8c4f4535" }
+dependencies = [
+    { name = "strata-contracts" },
+]
+
+[[package]]
 name = "strata-experiment"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main#c444c9887ce780f1e195fd8dfd644222c019e20f" }
+source = { git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main#bc072f1f024b76fe4bcbf50be526f464898311d8" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-catalog" },
@@ -1926,7 +1936,7 @@ dependencies = [
 [[package]]
 name = "strata-labeller"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#1803210720576455ed83d6b8ee95ca439ad0c5e9" }
+source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#51474bf6567009fabb8ecb064ca38604d193bc1b" }
 dependencies = [
     { name = "label-studio-sdk" },
     { name = "rich" },
@@ -1941,12 +1951,13 @@ dependencies = [
 [[package]]
 name = "strata-modelling"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main#3405ef31c0a098674c574ab7a6a6d281cd3a5889" }
+source = { git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main#71c50afb4d28033964a72d03dd928e7347b56e37" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
     { name = "strata-common", extra = ["migrations"] },
     { name = "strata-contracts" },
+    { name = "strata-evaluation" },
 ]
 
 [package.optional-dependencies]
@@ -1994,7 +2005,7 @@ dev = [
 [[package]]
 name = "strata-project"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-project.git?branch=main#e9f364b194faa22b58c046daf28781053ec6af63" }
+source = { git = "http://192.168.2.149:3000/em/strata-project.git?branch=main#1dcb47112ea43757f5faf30dad6b0cc9bb91223d" }
 dependencies = [
     { name = "strata-catalog" },
     { name = "strata-contracts" },

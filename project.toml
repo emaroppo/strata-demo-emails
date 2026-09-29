@@ -1,7 +1,7 @@
 name = "emails"
 
 [label_set]
-task = "span"
+label_type = "span"
 classes = ["PER", "ORG", "LOC", "DATE", "EMAIL", "PHONE", "URL", "ATTACHMENT"]
 
 [data]

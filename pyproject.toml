@@ -20,6 +20,7 @@ dependencies = [
     "strata-common",
     "strata-catalog",
     "strata-prepare",
+    "strata-evaluation",
     "strata-modelling",
     "strata-project",
 ]
@@ -42,6 +43,7 @@ strata-contracts = { git = "http://192.168.2.149:3000/em/strata-contracts.git", 
 strata-common = { git = "http://192.168.2.149:3000/em/strata-common.git", branch = "main" }
 strata-catalog = { git = "http://192.168.2.149:3000/em/strata-catalog.git", branch = "main" }
 strata-prepare = { git = "http://192.168.2.149:3000/em/strata-prepare.git", branch = "main" }
+strata-evaluation = { git = "http://192.168.2.149:3000/em/strata-evaluation.git", branch = "main" }
 strata-modelling = { git = "http://192.168.2.149:3000/em/strata-modelling.git", branch = "main" }
 strata-project = { git = "http://192.168.2.149:3000/em/strata-project.git", branch = "main" }
 strata-labeller = { git = "http://192.168.2.149:3000/em/strata-labeller.git", branch = "main" }
