@@ -1832,7 +1832,7 @@ wheels = [
 [[package]]
 name = "strata-catalog"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main#f13f173d556e9d455b6022a0e1ec9885e93c0b9e" }
+source = { git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main#8bcf2fd4f0021743fb360339e786f0401beac003" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
@@ -1915,15 +1915,16 @@ dev = [
 [[package]]
 name = "strata-evaluation"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-evaluation.git?branch=main#8446e8d19d8657828f6088d045dad4ae8c4f4535" }
+source = { git = "http://192.168.2.149:3000/em/strata-evaluation.git?branch=main#bd78513c787f8cd3e649fc9e2134f3a65bf6b09a" }
 dependencies = [
+    { name = "strata-common" },
     { name = "strata-contracts" },
 ]
 
 [[package]]
 name = "strata-experiment"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main#bc072f1f024b76fe4bcbf50be526f464898311d8" }
+source = { git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main#eb7e31c0f609d89d032bcb14f1898beb84cce9d7" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-catalog" },
@@ -1936,7 +1937,7 @@ dependencies = [
 [[package]]
 name = "strata-labeller"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#51474bf6567009fabb8ecb064ca38604d193bc1b" }
+source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#0c6bbb9ba86abc19095392182b624294c7ff10d9" }
 dependencies = [
     { name = "label-studio-sdk" },
     { name = "rich" },
@@ -1951,7 +1952,7 @@ dependencies = [
 [[package]]
 name = "strata-modelling"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main#71c50afb4d28033964a72d03dd928e7347b56e37" }
+source = { git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main#6b513a4104b90d55f78f2d635afb9f90253777bf" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
@@ -2005,7 +2006,7 @@ dev = [
 [[package]]
 name = "strata-project"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-project.git?branch=main#1dcb47112ea43757f5faf30dad6b0cc9bb91223d" }
+source = { git = "http://192.168.2.149:3000/em/strata-project.git?branch=main#08411beebfcfd2594a815613ce26b98ca1a543ad" }
 dependencies = [
     { name = "strata-catalog" },
     { name = "strata-contracts" },
