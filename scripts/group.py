@@ -62,6 +62,12 @@ def mentions_of(text: str, mask: list) -> list[Mention]:
     return [Mention(i, s, e, c, text[s:e]) for i, (s, e, c) in enumerate(spans)]
 
 
+def decisions(mentions: list[Mention]) -> int:
+    """What grouping a message will ask: every mention of a decided class but its first."""
+    counts = Counter(m.cls for m in mentions if m.cls in DECIDED)
+    return sum(n - 1 for n in counts.values())
+
+
 def partition(entities: list[Entity]) -> list[list[int]]:
     """The decided classes' groups, as mention ids, comparable across groupers."""
     return sorted(sorted(m.id for m in e.mentions) for e in entities if e.cls in DECIDED)
@@ -87,6 +93,16 @@ def run(args, blobs: Path) -> None:
         text = text_of(blob_path(blobs, entry["checksum"]))
         mentions = mentions_of(text, entry["mask"])
         line = {"checksum": entry["checksum"], "source": entry["source"]}
+        asks = decisions(mentions)
+        if (
+            args.max_decisions is not None
+            and entry["source"] != "human"
+            and asks > args.max_decisions
+        ):
+            line |= {"kept": False, "reason": f"{asks} decisions, over --max-decisions"}
+            outcomes["skipped"] += 1
+            lines.append(line)
+            continue
         try:
             grouped = group_message(text, mentions, chooser)
         except GroupingFailed as e:
@@ -122,7 +138,8 @@ def run(args, blobs: Path) -> None:
     how = f"the LLM at {args.llm}, {chooser.identity}" if chooser else "the rules"
     print(
         f"grouped {len(entries):,} message(s) with {how}: "
-        f"{outcomes['kept']:,} kept, {outcomes['failed']:,} failed; {calls:,} calls"
+        f"{outcomes['kept']:,} kept, {outcomes['failed']:,} failed, "
+        f"{outcomes['skipped']:,} skipped; {calls:,} calls"
     )
     if chooser:
         print(f"  {chooser.hits:,} decisions from the cache, {chooser.misses:,} asked")
@@ -253,6 +270,11 @@ def main(argv=None) -> int:
         "--no-think", action="store_true", help="Ask a reasoning model to answer straight away"
     )
     parser.add_argument("--limit", type=int, default=None, help="Only this many, for a trial run")
+    parser.add_argument(
+        "--max-decisions",
+        type=int,
+        help="Skip a message needing more decisions than this, unless labelled by hand",
+    )
     parser.add_argument("--review", type=int, help="Write a sheet of this many to group by hand")
     parser.add_argument("--sheet", type=Path, default=Path("notes/grouping-review.md"))
     parser.add_argument("--score", type=Path, help="A sheet grouped by hand, to score against")
