@@ -1,11 +1,11 @@
 # Named entities in mail, on a strata catalog
 
 A strata project: mail arrives as `.eml` files, a converter turns each
-message body into a document, and a span tagger learns to find people,
+message body into a document, and span models learn to find people,
 organisations, places, dates, addresses, phone numbers, URLs and
-attachments in it. What the project labels, from which catalog, with
-which model, is `project.toml`; where things are on this machine is
-`config.toml`; the loop is `strata-labeller`.
+attachments in it, so a message can be anonymised. What the project labels,
+from which catalog, with which model, is `project.toml`; where things are
+on this machine is `config.toml`; the loop is `strata-labeller`.
 
 The converter is the point. `prepare-email/` is a plugin written the way
 one is written outside strata: its own distribution, registered through
@@ -17,7 +17,7 @@ what it does.
 ## Running it
 
 ```bash
-uv sync --extra model
+uv sync --extra model --extra experiment
 # put the corpus under data/raw, one .eml per message (see below)
 uv run strata-labeller prepare
 uv run strata-labeller ingest
@@ -29,14 +29,74 @@ No database, no object store and no GPU: the committed `config.toml`
 names a SQLite index and a directory of blobs under `catalog/`. A host
 with a real catalog keeps its own file and names it in `$STRATA_CONFIG`.
 A Label Studio at the address in `config.toml` adds the review step
-(`push`, `export`); without one the loop still trains and reports.
+(`push`, `export`, with its key in `$LABEL_STUDIO_API_KEY`); without one
+the loop still trains and reports.
 
 The candidate spans a corpus arrives with, if any, land at ingest as an
 import batch: trusted and trained on, never counted as something a person
 said, and spot-checked where the model disagrees (`push --review-imports`).
 
+## Labelling
+
+`docs/labelling-guidelines.md` is the rulebook, at version 1: what each
+class covers, where a span starts and ends, and the conventions an
+anonymiser needs (a title is part of the name, a URL may keep its
+brackets if they balance, a skip means the message is out of scope). Its
+examples are invented; the guide quotes no one from the mail.
+
+## Comparing approaches
+
+`docs/anonymisation-approaches.md` sets out the ways to anonymise mail;
+`docs/roadmap.md` is the plan for comparing them fairly, starting with a
+random, double-checked gold set no approach trains or tunes on. Until that
+exists, the numbers below are on an **interim dev set**: the 29 validation
+messages of dataset version 7. They are not random, they were used to
+choose settings, and 29 messages is few, so read them as a direction, not
+a size.
+
+Every comparison is an experiment file under `comparisons/`, run and set
+side by side with:
+
+```bash
+uv run strata-experiment run comparisons/tagger.toml
+uv run strata-experiment report comparisons/*.toml --markdown
+```
+
+### Results so far: dev (emails v7 val, 29 messages)
+
+Two models: the BIO tagger (DistilBERT, `text-span`) and GLiNER
+(`gliner-span`, `knowledgator/gliner-pii-base-v1.0` fine-tuned for 30
+epochs, reading URLs as one word). Mean ± spread over three seeds.
+
+| approach | strict F1 | partial F1 | entities leaked ↓ | fragmented ↓ | character recall |
+|---|---|---|---|---|---|
+| tagger | 0.723 ± 0.010 | 0.868 ± 0.011 | **0.108 ± 0.008** | 0.065 | **0.972** |
+| GLiNER, fine-tuned | **0.822 ± 0.011** | **0.895 ± 0.003** | 0.129 ± 0.009 | **0.008** | 0.898 |
+| GLiNER, zero-shot (best of three checkpoints) | 0.533 | 0.630 | 0.477 | 0.004 | 0.375 |
+
+*Leaked*: share of true entities with any character left unmasked.
+*Fragmented*: share split across several placeholders ("Dear [PER] [PER]").
+
+GLiNER finds entities more exactly and almost never splits one; the tagger
+still leaves the fewest unmasked. Zero-shot, no checkpoint knows this
+guide's conventions well enough to be used as it is.
+
+### How each improves with data
+
+Strict F1 on dev, training on nested shares of the 117 training messages:
+
+| training messages | 25% | 50% | 75% | 100% |
+|---|---|---|---|---|
+| tagger | 0.596 | 0.670 | 0.681 | 0.723 |
+| GLiNER | 0.620 | 0.754 | 0.757 | 0.822 |
+
+Neither curve has flattened, and GLiNER's leak rate falls faster (32% at a
+quarter of the data, 13% at all of it): more labels should still pay, most
+of all for organisations, the weakest class for both.
+
 ## The corpus
 
 Not vendored. This project was run on a public archive of mail; the
 messages are somebody's, so they are fetched rather than shipped, and
-`data/` is ignored. Any directory of `.eml` files under `data/raw` works.
+`data/` is ignored, as are the catalog, the runs and the experiment
+ledger. Any directory of `.eml` files under `data/raw` works.
