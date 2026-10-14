@@ -502,6 +502,21 @@ wheels = [
 ]
 
 [[package]]
+name = "group-entities"
+version = "0.1.0"
+source = { editable = "group-entities" }
+dependencies = [
+    { name = "httpx" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.0" },
+]
+provides-extras = ["test"]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1986,6 +2001,7 @@ name = "strata-demo-emails"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "group-entities" },
     { name = "strata-catalog" },
     { name = "strata-common" },
     { name = "strata-contracts" },
@@ -2013,6 +2029,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "group-entities", editable = "group-entities" },
     { name = "strata-catalog", git = "https://github.com/emaroppo/strata-catalog.git?branch=main" },
     { name = "strata-common", git = "https://github.com/emaroppo/strata-common.git?branch=main" },
     { name = "strata-contracts", git = "https://github.com/emaroppo/strata-contracts.git?branch=main" },

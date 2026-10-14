@@ -13,6 +13,10 @@ dependencies = [
     # in prepare-email/ beside this file, registered through strata's entry
     # points like any plugin written outside strata.
     "strata-prepare-email",
+    # The grouping stage: which masked spans are one entity, numbered into
+    # [PER_1]-style placeholders. This project's own, in group-entities/
+    # beside this file; not a strata plugin, so not in its namespace.
+    "group-entities",
     # Named here although the labeller brings them: uv applies a source only
     # to a direct dependency, and until these are on an index each needs
     # its source below.
@@ -39,6 +43,7 @@ package = false
 # repositories on GitHub, at main; the plugin comes from beside this file.
 [tool.uv.sources]
 strata-prepare-email = { path = "prepare-email", editable = true }
+group-entities = { path = "group-entities", editable = true }
 strata-contracts = { git = "https://github.com/emaroppo/strata-contracts.git", branch = "main" }
 strata-common = { git = "https://github.com/emaroppo/strata-common.git", branch = "main" }
 strata-catalog = { git = "https://github.com/emaroppo/strata-catalog.git", branch = "main" }
@@ -53,7 +58,7 @@ strata-experiment = { git = "https://github.com/emaroppo/strata-experiment.git",
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [tool.pytest.ini_options]
-testpaths = ["prepare-email/tests"]
+testpaths = ["prepare-email/tests", "group-entities/tests"]
 
 [tool.ruff]
 line-length = 100
