@@ -1953,7 +1953,7 @@ wheels = [
 [[package]]
 name = "strata-catalog"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main#d0724423da1611791cf046dcfc834f1503918c61" }
+source = { git = "https://github.com/emaroppo/strata-catalog.git?branch=main#d0724423da1611791cf046dcfc834f1503918c61" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
@@ -1964,7 +1964,7 @@ dependencies = [
 [[package]]
 name = "strata-common"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-common.git?branch=main#10e3dfa46ed55301a56d115f5d4a649138de7a1b" }
+source = { git = "https://github.com/emaroppo/strata-common.git?branch=main#10e3dfa46ed55301a56d115f5d4a649138de7a1b" }
 
 [package.optional-dependencies]
 migrations = [
@@ -1975,7 +1975,7 @@ migrations = [
 [[package]]
 name = "strata-contracts"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main#18fa403869c4554abfdea12d18e8446f85f6ee96" }
+source = { git = "https://github.com/emaroppo/strata-contracts.git?branch=main#18fa403869c4554abfdea12d18e8446f85f6ee96" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-common" },
@@ -2013,17 +2013,17 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "strata-catalog", git = "http://192.168.2.149:3000/em/strata-catalog.git?branch=main" },
-    { name = "strata-common", git = "http://192.168.2.149:3000/em/strata-common.git?branch=main" },
-    { name = "strata-contracts", git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main" },
-    { name = "strata-evaluation", git = "http://192.168.2.149:3000/em/strata-evaluation.git?branch=main" },
-    { name = "strata-experiment", marker = "extra == 'experiment'", git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main" },
-    { name = "strata-labeller", git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main" },
-    { name = "strata-modelling", git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main" },
-    { name = "strata-modelling", extras = ["text", "gliner"], marker = "extra == 'model'", git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main" },
-    { name = "strata-prepare", git = "http://192.168.2.149:3000/em/strata-prepare.git?branch=main" },
+    { name = "strata-catalog", git = "https://github.com/emaroppo/strata-catalog.git?branch=main" },
+    { name = "strata-common", git = "https://github.com/emaroppo/strata-common.git?branch=main" },
+    { name = "strata-contracts", git = "https://github.com/emaroppo/strata-contracts.git?branch=main" },
+    { name = "strata-evaluation", git = "https://github.com/emaroppo/strata-evaluation.git?branch=main" },
+    { name = "strata-experiment", marker = "extra == 'experiment'", git = "https://github.com/emaroppo/strata-experiment.git?branch=main" },
+    { name = "strata-labeller", git = "https://github.com/emaroppo/strata-labeller.git?branch=main" },
+    { name = "strata-modelling", git = "https://github.com/emaroppo/strata-modelling.git?branch=main" },
+    { name = "strata-modelling", extras = ["text", "gliner"], marker = "extra == 'model'", git = "https://github.com/emaroppo/strata-modelling.git?branch=main" },
+    { name = "strata-prepare", git = "https://github.com/emaroppo/strata-prepare.git?branch=main" },
     { name = "strata-prepare-email", editable = "prepare-email" },
-    { name = "strata-project", git = "http://192.168.2.149:3000/em/strata-project.git?branch=main" },
+    { name = "strata-project", git = "https://github.com/emaroppo/strata-project.git?branch=main" },
 ]
 provides-extras = ["model", "experiment"]
 
@@ -2036,7 +2036,7 @@ dev = [
 [[package]]
 name = "strata-evaluation"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-evaluation.git?branch=main#72e1d58b8858b2dd7c115edc7c14aafa2c122a06" }
+source = { git = "https://github.com/emaroppo/strata-evaluation.git?branch=main#72e1d58b8858b2dd7c115edc7c14aafa2c122a06" }
 dependencies = [
     { name = "strata-common" },
     { name = "strata-contracts" },
@@ -2045,7 +2045,7 @@ dependencies = [
 [[package]]
 name = "strata-experiment"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-experiment.git?branch=main#974c97641dd1012a0d643c698f230128fb09fed3" }
+source = { git = "https://github.com/emaroppo/strata-experiment.git?branch=main#974c97641dd1012a0d643c698f230128fb09fed3" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-catalog" },
@@ -2058,7 +2058,7 @@ dependencies = [
 [[package]]
 name = "strata-labeller"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#d8e15b4a602d7894d41b0fef01c1795d89a47295" }
+source = { git = "https://github.com/emaroppo/strata-labeller.git?branch=main#d8e15b4a602d7894d41b0fef01c1795d89a47295" }
 dependencies = [
     { name = "label-studio-sdk" },
     { name = "rich" },
@@ -2073,7 +2073,7 @@ dependencies = [
 [[package]]
 name = "strata-modelling"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-modelling.git?branch=main#68a26b38b2953f4c0401472ce8361ad743b855ea" }
+source = { git = "https://github.com/emaroppo/strata-modelling.git?branch=main#68a26b38b2953f4c0401472ce8361ad743b855ea" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
@@ -2101,7 +2101,7 @@ text = [
 [[package]]
 name = "strata-prepare"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-prepare.git?branch=main#1a2ea24485a89b36c0f04497114cfe4fdc66016b" }
+source = { git = "https://github.com/emaroppo/strata-prepare.git?branch=main#1a2ea24485a89b36c0f04497114cfe4fdc66016b" }
 dependencies = [
     { name = "strata-common" },
     { name = "strata-contracts" },
@@ -2135,7 +2135,7 @@ dev = [
 [[package]]
 name = "strata-project"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-project.git?branch=main#896677559d4dfc22079c6a2b7e7edfa9be28bce4" }
+source = { git = "https://github.com/emaroppo/strata-project.git?branch=main#896677559d4dfc22079c6a2b7e7edfa9be28bce4" }
 dependencies = [
     { name = "strata-catalog" },
     { name = "strata-contracts" },

@@ -36,18 +36,18 @@ experiment = ["strata-experiment"]
 package = false
 
 # Until the strata packages are on an index they come from their
-# repositories, at main; the plugin comes from beside this file.
+# repositories on GitHub, at main; the plugin comes from beside this file.
 [tool.uv.sources]
 strata-prepare-email = { path = "prepare-email", editable = true }
-strata-contracts = { git = "http://192.168.2.149:3000/em/strata-contracts.git", branch = "main" }
-strata-common = { git = "http://192.168.2.149:3000/em/strata-common.git", branch = "main" }
-strata-catalog = { git = "http://192.168.2.149:3000/em/strata-catalog.git", branch = "main" }
-strata-prepare = { git = "http://192.168.2.149:3000/em/strata-prepare.git", branch = "main" }
-strata-evaluation = { git = "http://192.168.2.149:3000/em/strata-evaluation.git", branch = "main" }
-strata-modelling = { git = "http://192.168.2.149:3000/em/strata-modelling.git", branch = "main" }
-strata-project = { git = "http://192.168.2.149:3000/em/strata-project.git", branch = "main" }
-strata-labeller = { git = "http://192.168.2.149:3000/em/strata-labeller.git", branch = "main" }
-strata-experiment = { git = "http://192.168.2.149:3000/em/strata-experiment.git", branch = "main" }
+strata-contracts = { git = "https://github.com/emaroppo/strata-contracts.git", branch = "main" }
+strata-common = { git = "https://github.com/emaroppo/strata-common.git", branch = "main" }
+strata-catalog = { git = "https://github.com/emaroppo/strata-catalog.git", branch = "main" }
+strata-prepare = { git = "https://github.com/emaroppo/strata-prepare.git", branch = "main" }
+strata-evaluation = { git = "https://github.com/emaroppo/strata-evaluation.git", branch = "main" }
+strata-modelling = { git = "https://github.com/emaroppo/strata-modelling.git", branch = "main" }
+strata-project = { git = "https://github.com/emaroppo/strata-project.git", branch = "main" }
+strata-labeller = { git = "https://github.com/emaroppo/strata-labeller.git", branch = "main" }
+strata-experiment = { git = "https://github.com/emaroppo/strata-experiment.git", branch = "main" }
 
 [dependency-groups]
 dev = ["pytest>=8.0", "ruff>=0.6"]
