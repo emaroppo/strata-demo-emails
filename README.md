@@ -99,6 +99,13 @@ anonymiser needs (a title is part of the name, a URL may keep its
 brackets if they balance, a skip means the message is out of scope). Its
 examples are invented; the guide quotes no one from the mail.
 
+## Decisions
+
+`docs/adr/` records what this project decided and why: two models for
+detection and a veto between them, indexed placeholders grouped by an LLM
+one mention at a time, checking outputs rather than adding prompt rules,
+and what the fine-tuning set is drawn from.
+
 ## Comparing approaches
 
 `docs/anonymisation-approaches.md` sets out the ways to anonymise mail;
