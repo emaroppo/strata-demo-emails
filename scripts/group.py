@@ -9,8 +9,9 @@ kept messages and the spans each was masked with. Without ``--llm`` the
 rules group them, the baseline; with it, PER, ORG and LOC mentions go one
 by one to that llama.cpp server. Written under ``--out``, gitignored like
 ``anonymised/``: each message with ``[PER_1]``-style placeholders, and a
-manifest saying per message what was found, how many calls it took, and
-whether it was kept. A message the chooser can't answer for is dropped.
+manifest saying per message what was found, how many calls it took,
+whether it was kept, and each span with the entity it went into. A
+message the chooser can't answer for is dropped.
 
 ``--review N`` writes a sheet of N hand-labelled messages, with their
 mentions numbered, for a person to group (into ``notes/``, gitignored: it
@@ -31,7 +32,7 @@ from itertools import combinations
 from pathlib import Path
 
 from anonymise import blob_path, text_of
-from group_entities import Entity, GroupingFailed, Mention, group_message, indexed
+from group_entities import Entity, GroupingFailed, Mention, group_message, indexed, numbered
 from group_entities.cache import CachedChooser
 from group_entities.llm import LlamaCppChooser
 from group_entities.loop import DECIDED
@@ -82,59 +83,76 @@ def chooser_for(url: str | None, think: bool = True) -> CachedChooser | None:
 # --- the run ---------------------------------------------------------------
 
 
+def group_one(
+    entry: dict, blobs: Path, chooser: CachedChooser | None, cap: int | None, out: Path
+) -> dict:
+    """One message grouped: its manifest line, and its text written if kept.
+
+    The line carries each span with the entity it was put in (``PER_1``),
+    the offsets being into the original text, so replacement can put the
+    same value wherever one entity is mentioned.
+    """
+    text = text_of(blob_path(blobs, entry["checksum"]))
+    mentions = mentions_of(text, entry["mask"])
+    line = {"checksum": entry["checksum"], "source": entry["source"]}
+    asks = decisions(mentions)
+    if cap is not None and entry["source"] != "human" and asks > cap:
+        return line | {
+            "kept": False,
+            "reason": f"{asks} decisions, over --max-decisions",
+            "_outcome": "skipped",
+        }
+    try:
+        grouped = group_message(text, mentions, chooser)
+    except GroupingFailed as e:
+        return line | {"kept": False, "reason": str(e), "_outcome": "failed"}
+    names = numbered(grouped.entities)
+    line |= {
+        "kept": True,
+        "entities": dict(sorted(Counter(e.cls for e in grouped.entities).items())),
+        "calls": grouped.calls,
+        "_outcome": "kept",
+    }
+    if chooser:
+        # The output check: where the rules group differently, the LLM may
+        # have merged two entities, so the message can be left out of what
+        # is trained on.
+        rules = group_message(text, mentions, None).entities
+        line["rules_agree"] = partition(grouped.entities) == partition(rules)
+    line["spans"] = [
+        {"start": m.start, "end": m.end, "class": m.cls, "entity": names[m.id], "text": m.text}
+        for m in mentions
+    ]
+    (out / "texts" / f"{entry['checksum']}.txt").write_text(
+        indexed(text, grouped.entities), encoding="utf-8"
+    )
+    return line
+
+
 def run(args, blobs: Path) -> None:
     entries = kept(args.manifest)[: args.limit]
     chooser = chooser_for(args.llm, think=not args.no_think)
     out = args.out
     (out / "texts").mkdir(parents=True, exist_ok=True)
-    lines, outcomes, calls = [], Counter(), 0
+    outcomes, calls = Counter(), 0
     started = time.monotonic()
-    for n, entry in enumerate(entries, 1):
-        text = text_of(blob_path(blobs, entry["checksum"]))
-        mentions = mentions_of(text, entry["mask"])
-        line = {"checksum": entry["checksum"], "source": entry["source"]}
-        asks = decisions(mentions)
-        if (
-            args.max_decisions is not None
-            and entry["source"] != "human"
-            and asks > args.max_decisions
-        ):
-            line |= {"kept": False, "reason": f"{asks} decisions, over --max-decisions"}
-            outcomes["skipped"] += 1
-            lines.append(line)
-            continue
-        try:
-            grouped = group_message(text, mentions, chooser)
-        except GroupingFailed as e:
-            line |= {"kept": False, "reason": str(e)}
-        else:
-            per_class = Counter(e.cls for e in grouped.entities)
-            line |= {
-                "kept": True,
-                "entities": dict(sorted(per_class.items())),
-                "calls": grouped.calls,
-            }
-            if chooser:
-                # The output check: where the rules group differently, the
-                # LLM may have merged two entities, so the message can be
-                # left out of what is trained on.
-                rules = group_message(text, mentions, None).entities
-                line["rules_agree"] = partition(grouped.entities) == partition(rules)
+    # Written as it goes, so an interrupted run keeps what it did; a rerun
+    # rewrites it whole, the decisions made so far coming from the cache.
+    with open(out / "manifest.jsonl", "w", encoding="utf-8") as manifest:
+        for n, entry in enumerate(entries, 1):
+            line = group_one(entry, blobs, chooser, args.max_decisions, out)
+            outcomes[line.pop("_outcome")] += 1
+            if "rules_agree" in line:
                 outcomes["rules agree" if line["rules_agree"] else "rules differ"] += 1
-            calls += grouped.calls
-            (out / "texts" / f"{entry['checksum']}.txt").write_text(
-                indexed(text, grouped.entities), encoding="utf-8"
-            )
-        outcomes["kept" if line["kept"] else "failed"] += 1
-        lines.append(line)
-        if chooser and n % 25 == 0:
-            rate = (time.monotonic() - started) / n
-            print(
-                f"  {n:,}/{len(entries):,}  {calls:,} calls, {chooser.hits:,} cached, "
-                f"{rate:.1f}s a message"
-            )
-    with open(out / "manifest.jsonl", "w", encoding="utf-8") as f:
-        f.writelines(json.dumps(line) + "\n" for line in lines)
+            calls += line.get("calls", 0)
+            manifest.write(json.dumps(line, ensure_ascii=False) + "\n")
+            manifest.flush()
+            if chooser and n % 25 == 0:
+                rate = (time.monotonic() - started) / n
+                print(
+                    f"  {n:,}/{len(entries):,}  {calls:,} calls, {chooser.hits:,} cached, "
+                    f"{rate:.1f}s a message"
+                )
     how = f"the LLM at {args.llm}, {chooser.identity}" if chooser else "the rules"
     print(
         f"grouped {len(entries):,} message(s) with {how}: "
