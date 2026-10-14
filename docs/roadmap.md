@@ -15,12 +15,14 @@ non-random set, and the holdout's labels have since changed.
 Before a single gold message is labelled, because changing any of these
 afterwards means relabelling the gold set.
 
-- [ ] **Freeze the guide.** `docs/labelling-guidelines.md` gets a version
-      (v1) and the gold set records which version it was labelled under.
-      A later rule change is a new gold release, not an edit. Settle the
-      open items first: hashtags, signature titles, what a skip means, and
-      one convention for brackets around URLs (either is fine, but optional
-      brackets make strict URL scores partly luck).
+- [x] **Freeze the guide.** `docs/labelling-guidelines.md` is at version
+      1, and the gold set records the version it was labelled under. A
+      later rule change is a new version and a new gold release, not an
+      edit. Settled: URL brackets may be included or not, as long as they
+      balance; hashtags aren't entities but entities inside them are; a
+      skip means what it means in strata, nothing applicable; a title
+      beneath a name is either inside the PER or has what's inside it (a
+      place, an organisation) labelled with its own class.
 - [x] **HTML policy: excluded.** HTML source (1.2% of the corpus) is left
       out by both preparers and counted as `skipped_html`, and the 146 HTML
       samples already in the catalog are tombstoned. The gold set is drawn

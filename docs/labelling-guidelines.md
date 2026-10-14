@@ -1,5 +1,8 @@
 # Labelling guidelines
 
+**Version 1**, 2026-10-14. The gold set records the version it was
+labelled under; a rule change is a new version, not an edit to this one.
+
 Every name, organisation, place, address and handle below is invented. A
 guide for anonymising mail quotes no one from the mail.
 
@@ -73,6 +76,14 @@ So:
   PER spans is a fragmented name. A title with no name after it ("the
   Senator said") is not labelled, unless it stands for a person (see
   couples below).
+- **A title on the line after the name,** as in a signature block
+  (`Maria Lopez` with `United States Senator` beneath it), may be labelled
+  either of two ways, and both are right:
+  - one PER over the name, the line break and the title, giving "[PER]";
+  - PER over the name, and each place or organisation inside the title
+    under its own class, leaving the rest of the title as it is:
+    "[PER]\n[LOC] Senator", "[PER]\nDirector, [ORG]". A title with nothing
+    inside it ("Campaign Manager") is then left as it is.
 - **Couples sharing a surname are two people.** `Anna and Mark Reyes` is
   PER `Anna` and PER `Mark Reyes`, giving "[PER] and [PER]". `Anna and` is
   never a span. The same holds when the first person is only a title:
@@ -130,11 +141,20 @@ Labels like `(office)` or `(cell)` stay outside.
 
 **ATTACHMENT**: the file name of an attached file.
 
-## Open
+## Hashtags
 
-- **Hashtags**: for now, an entity inside a hashtag is labelled even though
-  it is only part of a word: `#2016debate` labels DATE `2016`, and the `#`
-  and the rest of the tag stay outside.
-- **Titles after a name in a signature block** (`Maria Lopez` with
-  `United States Senator` on the next line) are left unlabelled for now;
-  the name alone is PER.
+A hashtag is not an entity of its own, but an entity inside one is
+labelled, even though it is only part of a word: `#2016debate` labels DATE
+`2016`, and the `#` and the rest of the tag stay outside. A tag that is
+nothing but an entity (`#AnaNovak`) labels the name without the `#`.
+
+## Skips
+
+A skip means what it means everywhere in strata: the sample was reviewed
+and nothing in the label set applies to it. It is neither training data
+nor queue. Use it for a message the labelling doesn't apply to, such as
+HTML source or text too garbled to read.
+
+A message the labelling does apply to, but with nothing to flag, is not a
+skip: submit it with no spans. That empty answer is training data, and
+the model needs it to learn when to tag nothing.
