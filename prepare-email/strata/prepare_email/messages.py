@@ -25,6 +25,7 @@ from strata.contracts import Span, Spans
 from strata.prepare import Prepared, Preparer
 
 from ._writing import write_document
+from .html import DEFAULT_MIN_TAGS, looks_like_html
 
 #: Messages longer than this are not converted. An arbitrary limit, and a
 #: first-pass compromise: a number chosen at conversion decides what the
@@ -41,8 +42,9 @@ class MessagesPreparer(Preparer):
     produces: ClassVar[str] = "email"
     sources: ClassVar[frozenset[str]] = frozenset({"json"})
 
-    def __init__(self, max_chars: int = DEFAULT_MAX_CHARS):
+    def __init__(self, max_chars: int = DEFAULT_MAX_CHARS, min_html_tags: int = DEFAULT_MIN_TAGS):
         self.max_chars = max_chars
+        self.min_html_tags = min_html_tags
         self._counts: Counter = Counter()
 
     def report(self) -> dict[str, int]:
@@ -65,6 +67,14 @@ class MessagesPreparer(Preparer):
             return None
         if len(body) > self.max_chars:
             self._counts["skipped_oversized"] += 1
+            return None
+        if looks_like_html(body, self.min_html_tags):
+            # The source's own is_html flag can't be trusted to say so
+            self._counts["skipped_html"] += 1
+            entities = (message.get("entities") or {}).get("manual") or {}
+            carried = sum(len(items or []) for items in entities.values())
+            if carried:
+                self._counts["dropped_with_message"] += carried
             return None
 
         text, where = _remapped(body)

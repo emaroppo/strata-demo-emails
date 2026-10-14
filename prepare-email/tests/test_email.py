@@ -212,6 +212,33 @@ def test_a_message_past_the_cap_is_skipped_and_counted(source, tmp_path):
     assert preparer.report()["skipped_oversized"] == 1
 
 
+HTML_BODY = "<table><tr><td>Dear Bob,</td></tr><tr><td>Ada Lovelace</td></tr></table>"
+
+
+def test_an_html_message_is_skipped_and_counted_whatever_its_flag_says(source, tmp_path):
+    records = corpus(body=HTML_BODY, entities={"PER": [["Ada Lovelace", 49, 61]]})
+    records[0]["messages"][0]["is_html"] = False
+    preparer = MessagesPreparer()
+    index = run(preparer, [source(records)], tmp_path / "out")
+    assert index.samples == {}
+    report = preparer.report()
+    # The spans it carried are lost with it, and say so
+    assert (report["skipped_html"], report["dropped_with_message"]) == (1, 1)
+
+
+def test_a_plain_part_that_is_html_source_is_skipped_and_counted(tmp_path):
+    mail = tmp_path / "flattened.eml"
+    mail.write_bytes(
+        b'Subject: Flattened\r\nContent-Type: text/plain; charset="utf-8"\r\n\r\n'
+        + HTML_BODY.encode()
+        + b"\r\n"
+    )
+    preparer = EmlPreparer()
+    index = run(preparer, [mail], tmp_path / "out")
+    assert index.samples == {}
+    assert preparer.report() == {"skipped_html": 1}
+
+
 def test_a_message_with_no_candidates_still_becomes_a_document(source, tmp_path):
     index = run(MessagesPreparer(), [source(corpus())], tmp_path / "out")
     [entry] = index.samples.values()
