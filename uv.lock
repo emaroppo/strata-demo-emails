@@ -1854,7 +1854,7 @@ migrations = [
 [[package]]
 name = "strata-contracts"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main#3efbf964a60f8f3d495b5174c4c1f639f696c7b8" }
+source = { git = "http://192.168.2.149:3000/em/strata-contracts.git?branch=main#18fa403869c4554abfdea12d18e8446f85f6ee96" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-common" },
@@ -1937,7 +1937,7 @@ dependencies = [
 [[package]]
 name = "strata-labeller"
 version = "0.1.0"
-source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#0c6bbb9ba86abc19095392182b624294c7ff10d9" }
+source = { git = "http://192.168.2.149:3000/em/strata-labeller.git?branch=main#d8e15b4a602d7894d41b0fef01c1795d89a47295" }
 dependencies = [
     { name = "label-studio-sdk" },
     { name = "rich" },
