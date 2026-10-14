@@ -1953,7 +1953,7 @@ wheels = [
 [[package]]
 name = "strata-catalog"
 version = "0.1.0"
-source = { git = "https://github.com/emaroppo/strata-catalog.git?branch=main#d0724423da1611791cf046dcfc834f1503918c61" }
+source = { git = "https://github.com/emaroppo/strata-catalog.git?branch=main#9e0274c0b8893b4728732c06ba54d4c9a6522786" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
@@ -2045,7 +2045,7 @@ dependencies = [
 [[package]]
 name = "strata-experiment"
 version = "0.1.0"
-source = { git = "https://github.com/emaroppo/strata-experiment.git?branch=main#974c97641dd1012a0d643c698f230128fb09fed3" }
+source = { git = "https://github.com/emaroppo/strata-experiment.git?branch=main#a91b3b4d5a4645e9b8cf9e25e504624c33204424" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-catalog" },
@@ -2073,7 +2073,7 @@ dependencies = [
 [[package]]
 name = "strata-modelling"
 version = "0.1.0"
-source = { git = "https://github.com/emaroppo/strata-modelling.git?branch=main#68a26b38b2953f4c0401472ce8361ad743b855ea" }
+source = { git = "https://github.com/emaroppo/strata-modelling.git?branch=main#736c1dfa0ac106d686130a1b69b5c28151bd2c01" }
 dependencies = [
     { name = "alembic" },
     { name = "sqlalchemy" },
