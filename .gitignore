@@ -5,6 +5,8 @@
 # The local catalog: the SQLite index and the blobs beside it.
 /catalog/
 /catalog-*/
+# Working notes: real cases from the corpus, so never published.
+/notes/
 # Project payload: outputs, not sources.
 datasets/
 runs/
