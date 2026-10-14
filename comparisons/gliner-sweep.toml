@@ -1,0 +1,43 @@
+# Tuning GLiNER's fine-tuning on the interim dev set (emails v7 val, 29
+# messages): dev is where settings are chosen, so these numbers are
+# optimistic for whichever wins. One seed per setting; the winner is then
+# run over three seeds in gliner-tuned.toml. URLs and addresses are read as
+# one word (whole_urls) throughout.
+
+project = "."
+name = "gliner-sweep"
+
+[[stage]]
+use = "dataset"
+name = "emails"
+version = 7
+val_ratio = 0.2
+holdout_ratio = 0.0
+
+[[stage]]
+use = "materialise"
+
+[[stage]]
+use = "split"
+
+[[stage]]
+use = "train"
+model = "gliner-span"
+fresh = true
+params = { whole_urls = true, others_lr = 5e-5, batch_size = 8, seed = 1 }
+
+[[stage]]
+use = "evaluate"
+on = "val"
+tasks = [
+    { use = "entities" },
+    { use = "mask" },
+]
+
+[grid]
+"train.params.checkpoint" = [
+    "knowledgator/gliner-pii-base-v1.0",
+    "urchade/gliner_multi_pii-v1",
+]
+"train.params.num_epochs" = [10, 30]
+"train.params.lr" = [1e-5, 3e-5]

@@ -1,0 +1,38 @@
+# Learning curve for the BIO tagger (text-span): trained on 25, 50, 75 and 100% of the 117
+# training messages of emails v7, scored on its 29 validation messages.
+# Dev numbers, not gold. The subsets are nested (each inside the next) and
+# one fixed draw; the three seeds vary the training, so the spread is
+# training noise, not the choice of subset. Roadmap step 6.
+
+project = "."
+name = "curve-tagger"
+
+[[stage]]
+use = "dataset"
+name = "emails"
+version = 7
+val_ratio = 0.2
+holdout_ratio = 0.0
+
+[[stage]]
+use = "materialise"
+
+[[stage]]
+use = "split"
+
+[[stage]]
+use = "train"
+# The project's model and parameters, cold, on its fresh schedule.
+fresh = true
+
+[[stage]]
+use = "evaluate"
+on = "val"
+tasks = [
+    { use = "entities" },
+    { use = "mask" },
+]
+
+[grid]
+"train.train_fraction" = [0.25, 0.5, 0.75, 1.0]
+"train.params.seed" = [1, 2, 3]

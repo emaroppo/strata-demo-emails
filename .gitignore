@@ -8,6 +8,9 @@
 # Working notes: real cases from the corpus, so never published.
 /notes/
 # Project payload: outputs, not sources.
+# The experiment ledger: what each trial ran and scored, written by
+# strata-experiment and read back by its report.
+experiments/
 datasets/
 runs/
 checkpoints/

@@ -1,0 +1,39 @@
+# Learning curve for fine-tuned GLiNER at the sweep's best setting: trained on 25, 50, 75 and 100% of the 117
+# training messages of emails v7, scored on its 29 validation messages.
+# Dev numbers, not gold. The subsets are nested (each inside the next) and
+# one fixed draw; the three seeds vary the training, so the spread is
+# training noise, not the choice of subset. Roadmap step 6.
+
+project = "."
+name = "curve-gliner"
+
+[[stage]]
+use = "dataset"
+name = "emails"
+version = 7
+val_ratio = 0.2
+holdout_ratio = 0.0
+
+[[stage]]
+use = "materialise"
+
+[[stage]]
+use = "split"
+
+[[stage]]
+use = "train"
+model = "gliner-span"
+fresh = true
+params = { checkpoint = "knowledgator/gliner-pii-base-v1.0", whole_urls = true, num_epochs = 30, lr = 3e-5, others_lr = 5e-5, batch_size = 8 }
+
+[[stage]]
+use = "evaluate"
+on = "val"
+tasks = [
+    { use = "entities" },
+    { use = "mask" },
+]
+
+[grid]
+"train.train_fraction" = [0.25, 0.5, 0.75, 1.0]
+"train.params.seed" = [1, 2, 3]
