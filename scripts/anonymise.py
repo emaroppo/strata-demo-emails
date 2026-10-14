@@ -14,6 +14,8 @@ texts of kept messages (dropped ones are never written), a manifest with
 one line per message saying what happened to it and why, and an audit
 sheet of a random sample of kept messages for a person to read. The
 audit's leak count bounds the rate for the whole set; the README says how.
+A kept message's line also carries the spans it was masked with, as
+``mask`` ([start, end, class]), which the grouping stage reads.
 """
 
 import argparse
@@ -115,6 +117,7 @@ def main(argv=None) -> int:
         }
         reasons[entry["reason"]] += 1
         if entry["kept"]:
+            entry["mask"] = [list(s) for s in mask]
             (out / "texts" / f"{sample.checksum}.txt").write_text(
                 masked(text, mask), encoding="utf-8"
             )
@@ -135,6 +138,7 @@ def main(argv=None) -> int:
                 "kept": True,
                 "reason": "labelled by hand",
                 "unmasked_chars": 0,
+                "mask": [list(s) for s in spans],
             }
         )
         reasons["labelled by hand"] += 1
