@@ -14,6 +14,61 @@ the catalog's entry points (`strata.sample_types` for the `email` type,
 own conformance suite. Nothing in strata knows it exists. Its README says
 what it does.
 
+## An example
+
+A message made up for this README (no one in it exists), and what the
+fine-tuned GLiNER model makes of it:
+
+```
+Hi Dana,
+
+Thanks for joining the call with Northfield Tenants Union on Tuesday. As
+promised, I've attached the draft budget (budget-draft-v3.xlsx) and the
+venue details for the Riverside town hall on March 12 at 6:30pm.
+
+Senator Maria Lopez will open, and Sam Okafor from the Daily Ledger has
+asked for ten minutes afterwards. The hall is at 41 Mill Street,
+Riverside OH 44000; parking is behind the library.
+
+The sign-up page is live at https://www.example.org/townhall-rsvp if you
+want to share it.
+
+Best,
+Ruth Adler
+Field Director, Coalition for Fair Housing
+ruth.adler@example.org | (555) 014-2297
+```
+
+```
+Hi [PER],
+
+Thanks for joining the call with [ORG] on [DATE]. As
+promised, I've attached the draft budget (budget-draft-v3.xlsx) and the
+venue details for the [LOC] town hall on [DATE].
+
+[PER] will open, and [PER] from [ORG] has
+asked for ten minutes afterwards. The hall is at [LOC]; parking is behind the library.
+
+The sign-up page is live at [URL] if you
+want to share it.
+
+Best,
+[PER]
+Field Director, [ORG]
+[EMAIL] | [PHONE]
+```
+
+Every name, organisation, place, date and contact detail is masked, the
+title goes with the name ("Senator Maria Lopez" is one `[PER]`), and the
+address is one `[LOC]` across its line break. One thing is missed: the
+attachment's name, `budget-draft-v3.xlsx`, is left in clear.
+
+That is why GLiNER does not work alone. A second model, the BIO tagger,
+reads the same message, and here it flags part of that file name; since
+the tagger sees something GLiNER left unmasked, this message is dropped
+rather than kept (`scripts/anonymise.py`). On the corpus this keeps 29% of
+the messages: a strict filter, but the corpus is large enough to afford it.
+
 ## Running it
 
 ```bash
