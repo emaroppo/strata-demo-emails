@@ -212,6 +212,20 @@ def test_a_message_past_the_cap_is_skipped_and_counted(source, tmp_path):
     assert preparer.report()["skipped_oversized"] == 1
 
 
+def test_a_candidate_span_is_trimmed_of_surrounding_whitespace(source, tmp_path):
+    body = "Room:   4120\r\nThanks"
+    preparer = MessagesPreparer()
+    index = run(
+        preparer,
+        [source(corpus(body=body, entities={"LOC": [["  4120", 6, 12]]}))],
+        tmp_path / "out",
+    )
+    [entry] = index.samples.values()
+    [span] = entry.value.values
+    assert (span.start, span.end, span.text) == (8, 12, "4120")
+    assert preparer.report()["trimmed_spans"] == 1
+
+
 HTML_BODY = "<table><tr><td>Dear Bob,</td></tr><tr><td>Ada Lovelace</td></tr></table>"
 
 

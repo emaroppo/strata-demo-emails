@@ -78,7 +78,10 @@ class MessagesPreparer(Preparer):
             return None
 
         text, where = _remapped(body)
-        spans = self._spans(message, body, text, where)
+        # Candidates follow the labelling rule: no whitespace at either edge
+        spans, moved = Spans(values=self._spans(message, body, text, where)).trimmed(text)
+        if moved:
+            self._counts["trimmed_spans"] += moved
         headers = message.get("headers") or {}
         metadata = {
             # The join key for the same mail ingested in another format.
@@ -96,7 +99,7 @@ class MessagesPreparer(Preparer):
             Path(record.get("file_path") or "message").stem,
             text,
             metadata,
-            value=Spans(values=spans) if spans else Spans(),
+            value=spans,
         )
 
     def _spans(self, message: dict, body: str, text: str, where: list[int]) -> list[Span]:
