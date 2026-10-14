@@ -7,6 +7,10 @@
 /catalog-*/
 # Working notes: real cases from the corpus, so never published.
 /notes/
+# Anonymised output and its audit: masked mail, and whatever leaked
+# through is exactly what the audit is for, so never published.
+/anonymised/
+/anonymised-*/
 # Project payload: outputs, not sources.
 # The experiment ledger: what each trial ran and scored, written by
 # strata-experiment and read back by its report.
