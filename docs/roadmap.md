@@ -27,9 +27,10 @@ afterwards means relabelling the gold set.
       out by both preparers and counted as `skipped_html`, and the 146 HTML
       samples already in the catalog are tombstoned. The gold set is drawn
       after this, so it describes what a model will actually see.
-- [ ] **Text defects decided.** Words run together where a line break was
-      (about 1% of messages): fix at prepare, or keep and report as a known
-      condition of the corpus. Either way, the same text for every approach.
+- [x] **Text defects: accepted.** Words run together where a line break
+      was (about 1% of messages) are kept as a known condition of the
+      corpus, already present in the export it came from. Every approach
+      sees the same text, and the write-up says so.
 - [x] **Whitespace trimmed.** Export trims every span against its
       document, `strata-labeller trim` repaired the ones already stored,
       and the preparer trims candidates too, so gold spans never start
