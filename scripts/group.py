@@ -31,7 +31,7 @@ from itertools import combinations
 from pathlib import Path
 
 from anonymise import blob_path, text_of
-from group_entities import GroupingFailed, Mention, group_message, indexed
+from group_entities import Entity, GroupingFailed, Mention, group_message, indexed
 from group_entities.cache import CachedChooser
 from group_entities.llm import LlamaCppChooser
 from group_entities.loop import DECIDED
@@ -60,6 +60,11 @@ def kept(manifest: Path) -> list[dict]:
 def mentions_of(text: str, mask: list) -> list[Mention]:
     spans = sorted((s, e, c) for s, e, c in mask)
     return [Mention(i, s, e, c, text[s:e]) for i, (s, e, c) in enumerate(spans)]
+
+
+def partition(entities: list[Entity]) -> list[list[int]]:
+    """The decided classes' groups, as mention ids, comparable across groupers."""
+    return sorted(sorted(m.id for m in e.mentions) for e in entities if e.cls in DECIDED)
 
 
 def chooser_for(url: str | None, think: bool = True) -> CachedChooser | None:
@@ -93,6 +98,13 @@ def run(args, blobs: Path) -> None:
                 "entities": dict(sorted(per_class.items())),
                 "calls": grouped.calls,
             }
+            if chooser:
+                # The output check: where the rules group differently, the
+                # LLM may have merged two entities, so the message can be
+                # left out of what is trained on.
+                rules = group_message(text, mentions, None).entities
+                line["rules_agree"] = partition(grouped.entities) == partition(rules)
+                outcomes["rules agree" if line["rules_agree"] else "rules differ"] += 1
             calls += grouped.calls
             (out / "texts" / f"{entry['checksum']}.txt").write_text(
                 indexed(text, grouped.entities), encoding="utf-8"
@@ -114,6 +126,10 @@ def run(args, blobs: Path) -> None:
     )
     if chooser:
         print(f"  {chooser.hits:,} decisions from the cache, {chooser.misses:,} asked")
+        print(
+            f"  the rules group {outcomes['rules agree']:,} the same way and "
+            f"{outcomes['rules differ']:,} differently (rules_agree in the manifest)"
+        )
     print(f"written to {out}")
 
 

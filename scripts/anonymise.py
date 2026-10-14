@@ -14,13 +14,20 @@ texts of kept messages (dropped ones are never written), a manifest with
 one line per message saying what happened to it and why, and an audit
 sheet of a random sample of kept messages for a person to read. The
 audit's leak count bounds the rate for the whole set; the README says how.
-A kept message's line also carries the spans it was masked with, as
-``mask`` ([start, end, class]), which the grouping stage reads.
+``--keep-from``, ``--min-chars``/``--max-chars`` and ``--sample`` narrow
+the messages before anything is predicted: to those an earlier run kept,
+of a usable length, and a sample of them that takes every hand-labelled
+one and draws the rest at random, with at least ``--url-share`` of it
+holding a link. A kept message's line also carries the
+spans it was masked with, as ``mask`` ([start, end, class]), which the
+grouping stage reads.
 """
 
 import argparse
 import json
+import math
 import random
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -37,6 +44,13 @@ Span = tuple[int, int, str]
 def text_of(path: Path) -> str:
     # Bytes as stored: offsets count \r. docs/labelling-guidelines.md
     return path.read_bytes().decode("utf-8", errors="replace")
+
+
+LINK = re.compile(r"https?://|www\.", re.IGNORECASE)
+
+
+def has_link(text: str) -> bool:
+    return bool(LINK.search(text))
 
 
 def blob_path(blobs: Path, checksum: str) -> Path:
@@ -78,8 +92,19 @@ def main(argv=None) -> int:
     parser.add_argument("--tagger", required=True, help="Run id of the tagger that vetoes")
     parser.add_argument("--out", type=Path, default=Path("anonymised"))
     parser.add_argument("--audit", type=int, default=100, help="Kept messages to sample")
-    parser.add_argument("--seed", type=int, default=0, help="Seeds the audit sample")
+    parser.add_argument("--seed", type=int, default=0, help="Seeds the audit and --sample")
     parser.add_argument("--limit", type=int, default=None, help="Only this many, for a trial run")
+    parser.add_argument(
+        "--keep-from", type=Path, help="Only messages an earlier run's manifest kept"
+    )
+    parser.add_argument("--min-chars", type=int, default=0, help="Leave out shorter messages")
+    parser.add_argument("--max-chars", type=int, default=None, help="Leave out longer messages")
+    parser.add_argument(
+        "--sample", type=int, help="This many: every hand-labelled one, the rest drawn at random"
+    )
+    parser.add_argument(
+        "--url-share", type=float, default=0.0, help="At least this share of --sample has a link"
+    )
     args = parser.parse_args(argv)
 
     project = Project.load(Path("."))
@@ -97,6 +122,34 @@ def main(argv=None) -> int:
     pool = catalog.samples.unlabelled(label_set_id, project.collections)
     if args.limit is not None:
         pool = pool[: args.limit]
+    if args.keep_from is not None:
+        entries = map(json.loads, args.keep_from.read_text(encoding="utf-8").splitlines())
+        before = {e["checksum"] for e in entries if e["kept"]}
+        pool = [s for s in pool if s.checksum in before]
+        labelled = [s for s in labelled if s.checksum in before]
+    if args.min_chars or args.max_chars is not None:
+        longest = args.max_chars if args.max_chars is not None else float("inf")
+
+        def fits(sample) -> bool:
+            return args.min_chars <= len(text_of(path_of(sample))) <= longest
+
+        pool = [s for s in pool if fits(s)]
+        labelled = [s for s in labelled if fits(s)]
+    if args.sample is not None:
+        labelled = labelled[: args.sample]
+        linked = {s.checksum: has_link(text_of(path_of(s))) for s in [*pool, *labelled]}
+        rng = random.Random(args.seed)
+        with_link = [s for s in pool if linked[s.checksum]]
+        have = sum(linked[s.checksum] for s in labelled)
+        want = max(0, math.ceil(args.url_share * args.sample) - have)
+        chosen = rng.sample(with_link, min(len(with_link), want))
+        picked = {s.checksum for s in chosen}
+        others = [s for s in pool if s.checksum not in picked]
+        pool = chosen + rng.sample(
+            others, min(len(others), args.sample - len(labelled) - len(chosen))
+        )
+        links = sum(linked[s.checksum] for s in [*labelled, *pool])
+        print(f"sampled {len(labelled) + len(pool):,}: {links:,} with a link")
     print(f"{len(pool):,} unlabelled message(s) to mask, {len(labelled):,} labelled by hand")
 
     pool_paths = [path_of(s) for s in pool]
