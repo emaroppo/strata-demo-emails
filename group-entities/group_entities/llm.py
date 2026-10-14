@@ -9,7 +9,7 @@ from .mentions import Entity, Mention
 
 #: Changes whenever the prompt or the reply's shape does, so cached
 #: decisions made under another prompt are not reused.
-PROMPT_VERSION = "1"
+PROMPT_VERSION = "2"
 
 DESCRIPTIONS = {
     "PER": "a person",
@@ -18,16 +18,21 @@ DESCRIPTIONS = {
 }
 
 SYSTEM = """\
-You decide which mentions in an email refer to the same {what}.
+You decide which mentions in an email name the same entity.
+
+Every mention below has already been identified as {what}; don't
+second-guess that, only decide which ones are the same.
 
 In the email, mentions already decided are tagged with their entity, as
 ⟦E1: text⟧. The mention to decide now is marked ⟪text⟫.
 
 Answer whether it refers to one of the entities listed, or to a new one.
 The same words can name two different entities (two people called Sam, a
-father and son with one surname), and different words can name one
-(a full name, then a surname, then a title with the surname). Decide from
-the context. Reply with JSON: a short reason, then the choice."""
+father and son with one surname), and different words can name one: a
+full name, a surname, a first name, a title with the surname, a nickname,
+or initials ("Maria Lopez", "Lopez", "Senator Lopez" and "ML" can all be
+one person). Decide from the context. Reply with JSON: a short reason,
+then the choice."""
 
 
 class InvalidChoice(ValueError):
