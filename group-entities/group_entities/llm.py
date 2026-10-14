@@ -110,14 +110,26 @@ class LlamaCppChooser:
     ``url`` is the server's root (``http://host:8080``); it speaks the
     OpenAI-compatible API, and the JSON schema in ``response_format``
     becomes a grammar, so the reply can only name an offered choice.
+
+    ``think=False`` asks a reasoning model to answer straight away
+    (``enable_thinking`` in the chat template): many times faster, and
+    whether it costs accuracy is for the hand-grouped messages to say.
     """
 
     def __init__(
-        self, url: str, timeout: float = 120.0, transport: httpx.BaseTransport | None = None
+        self,
+        url: str,
+        think: bool = True,
+        timeout: float = 120.0,
+        transport: httpx.BaseTransport | None = None,
     ):
+        self.think = think
         self.client = httpx.Client(base_url=url.rstrip("/"), timeout=timeout, transport=transport)
         self.model = self.client.get("/v1/models").raise_for_status().json()["data"][0]["id"]
-        self.identity = f"prompt {PROMPT_VERSION}, {self.model}"
+        # The file's name, not its path: the path says whose machine it is.
+        self.identity = f"prompt {PROMPT_VERSION}, {self.model.rsplit('/', 1)[-1]}" + (
+            "" if think else ", no thinking"
+        )
         self.last_reason = ""
 
     def choose(self, text: str, mention: Mention, entities: list[Entity]) -> int | None:
@@ -131,6 +143,7 @@ class LlamaCppChooser:
                     "type": "json_schema",
                     "json_schema": {"name": "choice", "schema": reply_schema(entities)},
                 },
+                **({} if self.think else {"chat_template_kwargs": {"enable_thinking": False}}),
             },
         ).raise_for_status()
         reply = response.json()["choices"][0]["message"]["content"]

@@ -216,3 +216,26 @@ def test_decisions_are_reused_until_the_prompt_or_model_changes(tmp_path):
     changed = Scripted(None)
     changed.identity = "another prompt"
     assert groups(group_message(text, found, CachedChooser(changed, path))) == [["Sam"], ["Sam"]]
+
+
+def test_without_thinking_the_chooser_says_so_and_is_cached_apart():
+    sent = []
+
+    def server(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/v1/models":
+            return httpx.Response(200, json={"data": [{"id": "/home/someone/m.gguf"}]})
+        sent.append(json.loads(request.content))
+        reply = {"reason": "", "choice": "new"}
+        return httpx.Response(200, json={"choices": [{"message": {"content": json.dumps(reply)}}]})
+
+    transport = httpx.MockTransport(server)
+    thinking = LlamaCppChooser("http://gx10:8080", transport=transport)
+    quick = LlamaCppChooser("http://gx10:8080", think=False, transport=transport)
+    text = "Sam and Sam."
+    found = mentions_of(text, ("PER", "Sam"), ("PER", "Sam"))
+    for chooser in (thinking, quick):
+        chooser.choose(text, found[1], [Entity("PER", [found[0]])])
+    assert "chat_template_kwargs" not in sent[0]
+    assert sent[1]["chat_template_kwargs"] == {"enable_thinking": False}
+    assert thinking.identity != quick.identity
+    assert "someone" not in thinking.identity

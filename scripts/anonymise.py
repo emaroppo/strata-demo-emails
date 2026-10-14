@@ -39,6 +39,12 @@ def text_of(path: Path) -> str:
     return path.read_bytes().decode("utf-8", errors="replace")
 
 
+def blob_path(blobs: Path, checksum: str) -> Path:
+    """Where a sample's bytes are, in the catalog's local blob store."""
+    [found] = list(blobs.glob(f"{checksum[:2]}/{checksum[2:4]}/{checksum}*"))
+    return found
+
+
 def masked(text: str, spans: list[Span]) -> str:
     """The text with each span replaced by its class's placeholder.
 
@@ -85,10 +91,7 @@ def main(argv=None) -> int:
     blobs = Path(config.root) / "blobs"
 
     def path_of(sample) -> Path:
-        [found] = list(
-            blobs.glob(f"{sample.checksum[:2]}/{sample.checksum[2:4]}/{sample.checksum}*")
-        )
-        return found
+        return blob_path(blobs, sample.checksum)
 
     labelled = catalog.samples.labelled(label_set_id, project.collections, source="human")
     pool = catalog.samples.unlabelled(label_set_id, project.collections)
