@@ -28,7 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 # The span tagger's framework. Left out of the base install so a host that
 # only prepares and ingests carries no torch.
-model = ["strata-modelling[text]"]
+model = ["strata-modelling[text,gliner]"]
 # Running an experiment file over this project.
 experiment = ["strata-experiment"]
 
