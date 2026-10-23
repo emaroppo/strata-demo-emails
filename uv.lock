@@ -1990,7 +1990,7 @@ migrations = [
 [[package]]
 name = "strata-contracts"
 version = "0.1.0"
-source = { git = "https://github.com/emaroppo/strata-contracts.git?branch=main#18fa403869c4554abfdea12d18e8446f85f6ee96" }
+source = { git = "https://github.com/emaroppo/strata-contracts.git?branch=main#41fe601bf6c79ea5114a26bfd779fa198b589139" }
 dependencies = [
     { name = "pydantic" },
     { name = "strata-common" },
@@ -2118,7 +2118,7 @@ text = [
 [[package]]
 name = "strata-prepare"
 version = "0.1.0"
-source = { git = "https://github.com/emaroppo/strata-prepare.git?branch=main#1a2ea24485a89b36c0f04497114cfe4fdc66016b" }
+source = { git = "https://github.com/emaroppo/strata-prepare.git?branch=main#86c14890a7a92b66746b5dd1c00bd5e19f707abd" }
 dependencies = [
     { name = "strata-common" },
     { name = "strata-contracts" },
