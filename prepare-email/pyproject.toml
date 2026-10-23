@@ -25,6 +25,13 @@ email = "strata.prepare_email.types:Email"
 eml = "strata.prepare_email.eml:EmlPreparer"
 email-json = "strata.prepare_email.messages:MessagesPreparer"
 
+# The same conversions as preparation stages, which a catalog runs over raw
+# files it holds (strata's docs/adr/0046), and phishnet's cleaning.
+[project.entry-points."strata.prepare_stages"]
+parse-rfc822 = "strata.prepare_email.stages:ParseRfc822"
+parse-message-json = "strata.prepare_email.stages:ParseMessageJson"
+clean-debris = "strata.prepare_email.stages:CleanDebris"
+
 
 # What developing this package alone needs beyond its extras. Inside the
 # strata workspace the root's group is used instead.

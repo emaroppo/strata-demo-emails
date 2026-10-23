@@ -47,3 +47,12 @@ def looks_like_html(text: str, min_tags: int = DEFAULT_MIN_TAGS) -> bool:
         return True
     # Stops at the threshold rather than counting a whole page
     return len(list(islice(_TAG.finditer(text), min_tags))) >= min_tags
+
+
+def structural_tags(text: str) -> int:
+    """How many structural tags ``text`` holds, counted in full.
+
+    What the email type records, so that the threshold is a freeze's to
+    choose rather than this package's.
+    """
+    return len(_TAG.findall(text))
