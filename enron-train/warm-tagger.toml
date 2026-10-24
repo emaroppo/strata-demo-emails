@@ -1,0 +1,35 @@
+# The tagger trained on DNC (run 125335: 117 messages, 40 epochs), continued
+# on the 42 Enron messages a person labelled. As warm-gliner.toml.
+#
+#   cd enron-train && uv run strata-experiment run warm-tagger.toml
+
+project = "."
+name = "enron-warm-tagger"
+
+[[stage]]
+use = "dataset"
+name = "enron-train"
+val_ratio = 0.2
+holdout_ratio = 0.0
+
+[[stage]]
+use = "materialise"
+
+[[stage]]
+use = "split"
+
+[[stage]]
+use = "train"
+parent = "20261014T125335743332-ubuntu-pc"
+
+[[stage]]
+use = "evaluate"
+on = "val"
+tasks = [
+    { use = "entities" },
+    { use = "mask" },
+]
+
+[grid]
+"train.params.num_epochs" = [10, 40]
+"train.params.seed" = [1, 2, 3]

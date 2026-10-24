@@ -93,7 +93,7 @@ said, and spot-checked where the model disagrees (`push --review-imports`).
 
 ## Labelling
 
-`docs/labelling-guidelines.md` is the rulebook, at version 1: what each
+`docs/labelling-guidelines.md` is the rulebook, at version 2: what each
 class covers, where a span starts and ends, and the conventions an
 anonymiser needs (a title is part of the name, a URL may keep its
 brackets if they balance, a skip means the message is out of scope). Its

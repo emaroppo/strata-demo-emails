@@ -28,3 +28,10 @@ __pycache__/
 .venv/
 .pytest_cache/
 .ruff_cache/
+
+# The Enron training project reads and writes the parent run store
+/enron-train/runs
+/mixed-train/runs
+
+# Labelled messages kept by hand: real mail, so never published.
+/validated_entries.jsonl

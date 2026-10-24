@@ -1,7 +1,11 @@
 # Labelling guidelines
 
-**Version 1**, 2026-10-14. The gold set records the version it was
+**Version 2**, 2026-10-15. The gold set records the version it was
 labelled under; a rule change is a new version, not an edit to this one.
+
+Changes from version 1: an extension keeps its prefix (`x4-2087`,
+`ex:6-3512`), and an attachment keeps the marks the mail export put
+around its name (`- budget.xls`, `<<budget.xls>>`).
 
 Every name, organisation, place, address and handle below is invented. A
 guide for anonymising mail quotes no one from the mail.
@@ -137,9 +141,14 @@ directly by its own profile link may share one span with it:
 `@ana_novak [ http://twitter.com/ana_novak ]` is one URL.
 
 **PHONE**: the number, from its first digit or `+` or `(` to its last digit.
-Labels like `(office)` or `(cell)` stay outside.
+An extension keeps the prefix that makes it one: `x4-2087`, `ex:6-3512`,
+`X40263`. Labels like `(office)` or `(cell)` stay outside, and so do field
+names and markers before the number (`Dial-in #`, `Phone:`).
 
-**ATTACHMENT**: the file name of an attached file.
+**ATTACHMENT**: the file name of an attached file, with the marks the mail
+export put around it: `- budget.xls`, `<<budget.xls>>`,
+`(See attached file: budget.xls)`. They are artefacts of the archive rather
+than of the writer, so the placeholder replaces them with the name.
 
 ## Hashtags
 

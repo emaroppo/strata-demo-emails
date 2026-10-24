@@ -1,0 +1,40 @@
+# GLiNER trained on DNC (run 131623: 117 messages, 30 epochs), continued on
+# those 117 and the 85 Enron messages a person labelled together, so that
+# learning Enron doesn't cost DNC. Neither the DNC validation messages nor the
+# Enron gold set is in the collection; both are scored apart
+# (notes/score_runs.py).
+#
+#   cd mixed-train && uv run strata-experiment run warm-gliner.toml
+
+project = "."
+name = "mixed-warm-gliner"
+
+[[stage]]
+use = "dataset"
+name = "mixed-train"
+val_ratio = 0.2
+holdout_ratio = 0.0
+
+[[stage]]
+use = "materialise"
+
+[[stage]]
+use = "split"
+
+[[stage]]
+use = "train"
+model = "gliner-span"
+parent = "20261014T131623020666-ubuntu-pc"
+params = { checkpoint = "knowledgator/gliner-pii-base-v1.0", whole_urls = true, lr = 3e-5, others_lr = 5e-5, batch_size = 8 }
+
+[[stage]]
+use = "evaluate"
+on = "val"
+tasks = [
+    { use = "entities" },
+    { use = "mask" },
+]
+
+[grid]
+"train.params.num_epochs" = [5, 10]
+"train.params.seed" = [1, 2, 3]

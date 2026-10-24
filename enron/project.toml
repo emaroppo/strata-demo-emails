@@ -1,0 +1,35 @@
+name = "enron"
+
+# The Enron mail, as the second corpus beside the DNC one: the same label
+# set, so a model trained on either reads the other, in a collection, a
+# dataset lineage and a runs directory of its own.
+
+[label_set]
+label_type = "span"
+classes = ["PER", "ORG", "LOC", "DATE", "EMAIL", "PHONE", "URL", "ATTACHMENT"]
+
+[data]
+# Under the parent's data/, which is ignored: somebody's mail.
+source_root = "../data/enron/source"
+root = "../data/enron/raw"
+type = "email"
+# Records of messages with the entity extraction they arrived with
+preparer = "email-json"
+
+[catalog]
+name = "emails"
+label_set = "emails"
+dataset = "enron"
+collections = ["emails/enron"]
+
+[model]
+ref = "text-span"
+
+[model.params]
+num_epochs = 4
+batch_size = 8
+lr = 5e-5
+window = 512
+
+[model.fresh_params]
+num_epochs = 40

@@ -1,0 +1,35 @@
+name = "enron-train"
+
+# The Enron messages a person labelled for training, and nothing else: no
+# import labels, none of the gold set. Its runs continue the DNC ones, so
+# runs/ is the parent project's store.
+
+[label_set]
+label_type = "span"
+classes = ["PER", "ORG", "LOC", "DATE", "EMAIL", "PHONE", "URL", "ATTACHMENT"]
+
+[data]
+# Under the parent's data/, which is ignored: somebody's mail.
+source_root = "../data/enron/source"
+root = "../data/enron/raw"
+type = "email"
+# Records of messages with the entity extraction they arrived with
+preparer = "email-json"
+
+[catalog]
+name = "emails"
+label_set = "emails"
+dataset = "enron-train"
+collections = ["emails/enron-train"]
+
+[model]
+ref = "text-span"
+
+[model.params]
+num_epochs = 4
+batch_size = 8
+lr = 5e-5
+window = 512
+
+[model.fresh_params]
+num_epochs = 40

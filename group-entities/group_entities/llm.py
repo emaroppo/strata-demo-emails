@@ -138,7 +138,19 @@ class LlamaCppChooser:
         self.last_reason = ""
 
     def choose(self, text: str, mention: Mention, entities: list[Entity]) -> int | None:
-        response = self.client.post(
+        try:
+            response = self.request(text, mention, entities)
+        except httpx.TimeoutException as e:
+            # Reasoning that runs past the timeout once tends to again: it
+            # is a reply that didn't come, retried and then failed like one.
+            raise InvalidChoice(f"No reply within {self.client.timeout.read}s") from e
+        reply = response.json()["choices"][0]["message"]["content"]
+        choice = parse(reply, entities)
+        self.last_reason = json.loads(reply).get("reason", "")
+        return choice
+
+    def request(self, text: str, mention: Mention, entities: list[Entity]) -> httpx.Response:
+        return self.client.post(
             "/v1/chat/completions",
             json={
                 "model": self.model,
@@ -151,7 +163,3 @@ class LlamaCppChooser:
                 **({} if self.think else {"chat_template_kwargs": {"enable_thinking": False}}),
             },
         ).raise_for_status()
-        reply = response.json()["choices"][0]["message"]["content"]
-        choice = parse(reply, entities)
-        self.last_reason = json.loads(reply).get("reason", "")
-        return choice

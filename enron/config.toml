@@ -1,0 +1,14 @@
+# The parent project's catalog, named from this directory: commands for
+# this project run from here.
+
+[catalog]
+default = "emails"
+
+[catalog.emails]
+root = "../catalog"
+blobs_prefix = "blobs-emails"
+url = ""
+s3_endpoint = ""
+
+[label_studio]
+url = "http://localhost:8080"

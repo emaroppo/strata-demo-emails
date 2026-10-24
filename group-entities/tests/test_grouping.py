@@ -199,6 +199,23 @@ def test_the_llama_cpp_chooser_constrains_the_reply_to_the_choices():
     assert sent[0]["temperature"] == 0
 
 
+def test_a_reply_that_times_out_is_retried_once_then_fails_the_message():
+    asked = []
+
+    def server(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/v1/models":
+            return httpx.Response(200, json={"data": [{"id": "m.gguf"}]})
+        asked.append(request)
+        raise httpx.ReadTimeout("timed out", request=request)
+
+    chooser = LlamaCppChooser("http://gx10:8080", transport=httpx.MockTransport(server))
+    text = "Sam left; Sam came back."
+    found = mentions_of(text, ("PER", "Sam"), ("PER", "Sam"))
+    with pytest.raises(GroupingFailed, match="No reply within"):
+        group_message(text, found, chooser)
+    assert len(asked) == 2
+
+
 # the cache
 
 

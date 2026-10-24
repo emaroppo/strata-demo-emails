@@ -1,0 +1,46 @@
+# How well the current tagger anonymises mail, scored on a holdout no trial
+# trains or selects on. Run from this directory:
+#
+#   uv run strata-experiment check experiment.toml
+#   uv run strata-experiment run   experiment.toml
+#
+# entities asks whether each entity was found with its label and bounds;
+# mask asks whether the anonymised message is right, one metric per way it
+# can go wrong: fragmented is "Dear [PER] [PER]", merging is two people
+# behind one placeholder. Every class the label set has is scored.
+#
+# One trial for now. Post-processing a model's spans (merging the pieces of
+# a split name, say) becomes a grid over the evaluate stage once harmonisers
+# land, and a generative model becomes a grid over train.model.
+
+project = "."
+name = "anonymise-baseline"
+
+[[stage]]
+use = "dataset"
+# A lineage of its own, so its first version draws a holdout; the labelling
+# loop's lineage never had one, and re-splitting it would stop the loop's
+# warm starts (docs/adr/0024).
+name = "anonymise-study"
+val_ratio = 0.15
+holdout_ratio = 0.15
+
+[[stage]]
+use = "materialise"
+
+[[stage]]
+use = "split"
+
+[[stage]]
+use = "train"
+# Cold, on the project's fresh schedule, so the number is a baseline and a
+# later trial compares with it.
+fresh = true
+
+[[stage]]
+use = "evaluate"
+on = "holdout"
+tasks = [
+    { use = "entities" },
+    { use = "mask" },
+]
