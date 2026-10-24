@@ -11,7 +11,8 @@ by one to that llama.cpp server. Written under ``--out``, gitignored like
 ``anonymised/``: each message with ``[PER_1]``-style placeholders, and a
 manifest saying per message what was found, how many calls it took,
 whether it was kept, and each span with the entity it went into. A
-message the chooser can't answer for is dropped.
+message the chooser can't answer for is dropped. What ``anonymise.py
+--cut`` left out of a message is left out here too.
 
 ``--review N`` writes a sheet of N hand-labelled messages, with their
 mentions numbered, for a person to group (into ``notes/``, gitignored: it
@@ -31,8 +32,8 @@ from collections import Counter
 from itertools import combinations
 from pathlib import Path
 
-from anonymise import BlobFiles, text_of
-from group_entities import Entity, GroupingFailed, Mention, group_message, indexed, numbered
+from anonymise import BlobFiles, rendered, text_of
+from group_entities import Entity, GroupingFailed, Mention, group_message, numbered
 from group_entities.cache import CachedChooser
 from group_entities.llm import LlamaCppChooser
 from group_entities.loop import DECIDED
@@ -123,8 +124,13 @@ def group_one(
         {"start": m.start, "end": m.end, "class": m.cls, "entity": names[m.id], "text": m.text}
         for m in mentions
     ]
+    cut = [tuple(s) for s in entry.get("cut", [])]
+    if cut:
+        line["cut"] = entry["cut"]
+    # As group_entities.indexed puts them, with the cut left out
+    swaps = [(m.start, m.end, f"[{names[m.id]}]") for e in grouped.entities for m in e.mentions]
     (out / "texts" / f"{entry['checksum']}.txt").write_text(
-        indexed(text, grouped.entities), encoding="utf-8"
+        rendered(text, swaps, cut), encoding="utf-8"
     )
     return line
 

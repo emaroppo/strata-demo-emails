@@ -21,6 +21,14 @@ one and draws the rest at random, with at least ``--url-share`` of it
 holding a link. A kept message's line also carries the
 spans it was masked with, as ``mask`` ([start, end, class]), which the
 grouping stage reads.
+
+``--cut`` names a label set whose spans are left out of every message,
+footers and disclaimers already marked, say. The tagger can't drop a
+message for what lies in them, and the written text doesn't have them;
+the line lists them as ``cut``, the offsets of ``mask`` and ``cut`` both
+being into the message as stored. A message with no answer there is cut
+nowhere: nothing new is looked for. One with nothing left once cut is
+dropped.
 """
 
 import argparse
@@ -82,18 +90,45 @@ class BlobFiles:
         return self.paths[checksum]
 
 
-def masked(text: str, spans: list[Span]) -> str:
-    """The text with each span replaced by its class's placeholder.
+def rendered(text: str, swaps: list[tuple[int, int, str]], cut: list[Span] = ()) -> str:
+    """The text with each (start, end, new) put in, and what ``cut`` covers left out.
+
+    Of overlapping swaps the first by start is kept. Swaps must lie
+    outside the cut, as :func:`outside` leaves them.
+    """
+    gaps: list[tuple[int, int, str]] = []
+    for start, end, _ in sorted(cut):
+        if gaps and start <= gaps[-1][1]:
+            gaps[-1] = (gaps[-1][0], max(gaps[-1][1], end), "")
+        else:
+            gaps.append((start, end, ""))
+    out, at = [], 0
+    for start, end, new in sorted([*gaps, *swaps], key=lambda s: s[:2]):
+        if start < at:
+            continue
+        out += [text[at:start], new]
+        at = end
+    return "".join([*out, text[at:]])
+
+
+def masked(text: str, spans: list[Span], cut: list[Span] = ()) -> str:
+    """The text with each span replaced by its class's placeholder, and the cut left out.
 
     Overlapping spans are one placeholder, in the class of the first.
     """
-    out, at = [], 0
-    for start, end, label in sorted(spans):
-        if start < at:
-            continue
-        out += [text[at:start], f"[{label}]"]
-        at = end
-    return "".join([*out, text[at:]])
+    return rendered(text, [(s, e, f"[{label}]") for s, e, label in sorted(spans)], cut)
+
+
+def outside(spans: list[Span], cut: list[Span]) -> list[Span]:
+    """Each span less any part a cut covers; one a cut falls inside is two."""
+    for cut_start, cut_end, _ in cut:
+        spans = [
+            piece
+            for s, e, label in spans
+            for piece in ((s, min(e, cut_start), label), (max(s, cut_end), e, label))
+            if piece[0] < piece[1]
+        ]
+    return spans
 
 
 def unmasked_by(text: str, mask: list[Span], other: list[Span]) -> int:
@@ -133,6 +168,9 @@ def main(argv=None) -> int:
     )
     parser.add_argument(
         "--url-share", type=float, default=0.0, help="At least this share of --sample has a link"
+    )
+    parser.add_argument(
+        "--cut", metavar="LABEL_SET", help="Leave out what this label set's answers mark"
     )
     args = parser.parse_args(argv)
 
@@ -188,6 +226,16 @@ def main(argv=None) -> int:
         print(f"sampled {len(labelled) + len(pool):,}: {links:,} with a link")
     print(f"{len(pool):,} unlabelled message(s) to mask, {len(labelled):,} labelled by hand")
 
+    cuts: dict[int, list[Span]] = {}
+    if args.cut is not None:
+        cut_set_id, _ = catalog.label_sets.get(args.cut)
+        marks = catalog.annotations.values_of(cut_set_id, [s.id for s in [*pool, *labelled]])
+        cuts = {
+            sample_id: [(v.start, v.end, v.labels[0]) for v in getattr(value, "values", [])]
+            for sample_id, value in marks.items()
+        }
+        print(f"{sum(1 for c in cuts.values() if c):,} message(s) with something to cut")
+
     pool_paths = [path_of(s) for s in pool]
     by_gliner = spans_from(args.gliner, pool_paths, store)
     by_tagger = spans_from(args.tagger, pool_paths, store)
@@ -196,44 +244,44 @@ def main(argv=None) -> int:
     (out / "texts").mkdir(parents=True, exist_ok=True)
     manifest, kept, reasons = [], [], Counter()
 
-    for sample, path, mask, veto in zip(pool, pool_paths, by_gliner, by_tagger, strict=True):
-        text = text_of(path)
-        missed = unmasked_by(text, mask, veto)
+    def record(sample, source: str, text: str, mask: list[Span], reason: str, missed=0) -> None:
+        """A message's manifest line, and its masked text if it is kept."""
+        cut = cuts.get(sample.id, [])
+        body = masked(text, mask, cut)
+        if not missed and not body.strip():
+            reason = "nothing left once cut"
         entry = {
             "checksum": sample.checksum,
-            "source": "gliner",
+            "source": source,
             "spans": len(mask),
-            "kept": missed == 0,
-            "reason": "models agree" if missed == 0 else "tagger flags unmasked text",
+            "kept": reason in ("models agree", "labelled by hand"),
+            "reason": reason,
             "unmasked_chars": missed,
         }
-        reasons[entry["reason"]] += 1
+        reasons[reason] += 1
         if entry["kept"]:
             entry["mask"] = [list(s) for s in mask]
-            (out / "texts" / f"{sample.checksum}.txt").write_text(
-                masked(text, mask), encoding="utf-8"
-            )
-            kept.append(sample.checksum)
+            if cut:
+                entry["cut"] = [list(s) for s in cut]
+            (out / "texts" / f"{sample.checksum}.txt").write_text(body, encoding="utf-8")
+            if source == "gliner":
+                kept.append(sample.checksum)
         manifest.append(entry)
+
+    for sample, path, mask, veto in zip(pool, pool_paths, by_gliner, by_tagger, strict=True):
+        text = text_of(path)
+        cut = cuts.get(sample.id, [])
+        mask = outside(mask, cut)
+        missed = unmasked_by(text, mask + cut, veto)
+        reason = "models agree" if missed == 0 else "tagger flags unmasked text"
+        record(sample, "gliner", text, mask, reason, missed)
 
     answers = catalog.annotations.values_of(label_set_id, [s.id for s in labelled])
     for sample in labelled:
         value = answers.get(sample.id)
         spans = [(v.start, v.end, v.labels[0]) for v in getattr(value, "values", [])]
-        text = text_of(path_of(sample))
-        (out / "texts" / f"{sample.checksum}.txt").write_text(masked(text, spans), encoding="utf-8")
-        manifest.append(
-            {
-                "checksum": sample.checksum,
-                "source": "human",
-                "spans": len(spans),
-                "kept": True,
-                "reason": "labelled by hand",
-                "unmasked_chars": 0,
-                "mask": [list(s) for s in spans],
-            }
-        )
-        reasons["labelled by hand"] += 1
+        spans = outside(spans, cuts.get(sample.id, []))
+        record(sample, "human", text_of(path_of(sample)), spans, "labelled by hand")
 
     with open(out / "manifest.jsonl", "w", encoding="utf-8") as f:
         for entry in manifest:
