@@ -2136,11 +2136,13 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.0" },
+    { name = "strata-catalog", marker = "extra == 'catalog'", specifier = ">=0.1,<0.2" },
+    { name = "strata-catalog", marker = "extra == 'test'", specifier = ">=0.1,<0.2" },
     { name = "strata-contracts", specifier = ">=0.1,<0.2" },
     { name = "strata-prepare", specifier = ">=0.1,<0.2" },
     { name = "strata-prepare", extras = ["test"], marker = "extra == 'test'", specifier = ">=0.1,<0.2" },
 ]
-provides-extras = ["test"]
+provides-extras = ["catalog", "test"]
 
 [package.metadata.requires-dev]
 dev = [

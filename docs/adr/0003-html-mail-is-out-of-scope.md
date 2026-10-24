@@ -1,6 +1,6 @@
 # 3. HTML mail is out of scope
 
-**Status:** accepted
+**Status:** accepted; removal when prepared amended by record 0013 (proposed)
 
 ## The decision
 
@@ -25,3 +25,13 @@ text), and the plain-text messages are plenty for the goal.
   template generator that is acceptable; the selection
   ([ADR 10](0010-what-the-fine-tuning-set-is-drawn-from.md)) drops most
   newsletter-length messages anyway.
+
+## Amendments
+
+- **HTML mail is kept when prepared, and skipped for review instead**
+  ([record 0013](0013-html-mail-is-kept-and-skipped-for-review.md)). The
+  preparation stages serve more than one project, so they keep a body
+  with HTML in it and record its tag count; each project skips such
+  samples in the label sets it reviews, with source `import`, and leaves
+  them out of a dataset version by selection. Not labelling markup still
+  stands.

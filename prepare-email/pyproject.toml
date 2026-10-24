@@ -13,11 +13,17 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8.0", "strata-prepare[test]>=0.1,<0.2"]
+# skip-html reads a catalog; nothing else here does, so it is an extra
+catalog = ["strata-catalog>=0.1,<0.2"]
+test = ["pytest>=8.0", "strata-prepare[test]>=0.1,<0.2", "strata-catalog>=0.1,<0.2"]
+
+[project.scripts]
+skip-html = "strata.prepare_email.skip_html:main"
 
 # What this adds: one sample type, and two ways into it. The
 # candidate spans a converted corpus carries land when it is ingested,
-# like any prepared corpus's labels; nothing here writes to a catalog.
+# like any prepared corpus's labels; nothing here writes to a catalog
+# (skip-html reads one, and writes a file for an import).
 [project.entry-points."strata.sample_types"]
 email = "strata.prepare_email.types:Email"
 

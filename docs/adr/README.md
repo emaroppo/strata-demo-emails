@@ -6,7 +6,7 @@ its repository; these are this project's.
 
 1. [The corpus is fetched, and what it yields stays local](0001-the-corpus-is-fetched-and-what-it-yields-stays-local.md)
 2. [GLiNER masks, the tagger vetoes](0002-gliner-masks-and-the-tagger-vetoes.md)
-3. [HTML mail is out of scope](0003-html-mail-is-out-of-scope.md)
+3. [HTML mail is out of scope](0003-html-mail-is-out-of-scope.md) (amended by 13)
 4. [Numbers are dev numbers until a gold set exists](0004-numbers-are-dev-numbers-until-a-gold-set-exists.md)
 5. [Placeholders are indexed per entity, one class at a time](0005-placeholders-are-indexed-per-entity.md)
 6. [An LLM decides each mention, and code drives the loop](0006-an-llm-decides-each-mention-and-code-drives-the-loop.md)
@@ -16,3 +16,4 @@ its repository; these are this project's.
 10. [What the fine-tuning set is drawn from](0010-what-the-fine-tuning-set-is-drawn-from.md)
 11. [Every grouped message is judged, and who judged it is recorded](0011-every-grouped-message-is-judged.md)
 12. [Grouping is this project's own package, not a strata plugin](0012-grouping-is-this-projects-own-package.md)
+13. [HTML mail is kept, measured, and skipped for review by a project](0013-html-mail-is-kept-and-skipped-for-review.md)

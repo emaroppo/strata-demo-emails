@@ -16,6 +16,9 @@ uv add strata-prepare-email
 | `strata.sample_types` | `email` | a message body as a document, subclassing `Text` |
 | `strata.preparers` | `eml` | `.eml` files into `email` documents |
 | `strata.preparers` | `email-json` | a message JSON export into `email` documents |
+| `strata.prepare_stages` | `parse-rfc822`, `parse-message-json` | the same conversions as stages a catalog runs over raw files it holds |
+| `strata.prepare_stages` | `clean-debris` | quoted-printable debris, `[IMAGE]` and quote prefixes removed |
+| script | `skip-html` | HTML mail skipped in a label set, as an answers file (the `catalog` extra) |
 
 One sample is one message body, as characters. Headers are metadata on
 the sample, never prepended to the text, so a span annotated against the
@@ -28,6 +31,21 @@ those candidate spans in the same pass as an import batch — trusted and
 trained on, never as something a person said, and spot-reviewed with
 `push --review-imports` where the model disagrees with them. Nothing in
 this package writes to a catalog.
+
+## Skipping HTML for review
+
+The stages keep a body that is HTML source, and the type records its
+`html_tags`; leaving it out is a project's choice (ADR 0013).
+`skip-html` makes it for a review queue: a skip, with source `import`,
+for every sample in the collections named that looks like a page, written
+as an answers file for `strata-catalog import-answers`.
+
+```bash
+uv add 'strata-prepare-email[catalog]'
+skip-html --config config.toml --label-set entities \
+    --collection mail/single --out skips.json
+strata-catalog import-answers skips.json --dry-run
+```
 
 ## Tests
 
