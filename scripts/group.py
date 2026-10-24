@@ -31,7 +31,7 @@ from collections import Counter
 from itertools import combinations
 from pathlib import Path
 
-from anonymise import blob_path, text_of
+from anonymise import BlobFiles, text_of
 from group_entities import Entity, GroupingFailed, Mention, group_message, indexed, numbered
 from group_entities.cache import CachedChooser
 from group_entities.llm import LlamaCppChooser
@@ -43,11 +43,11 @@ from strata.project import Project, Settings
 CACHE = Path(".state/grouping/decisions.jsonl")
 
 
-def blobs_dir() -> Path:
+def blob_files() -> BlobFiles:
     project = Project.load(Path("."))
     config = Settings.load(None).catalogs.named(project.catalog.name)
-    open_catalog(config)  # refuses early if the catalog isn't this project's
-    return Path(config.root) / "blobs"
+    # Refuses early if the catalog isn't this project's
+    return BlobFiles(open_catalog(config))
 
 
 def kept(manifest: Path) -> list[dict]:
@@ -84,7 +84,7 @@ def chooser_for(url: str | None, think: bool = True) -> CachedChooser | None:
 
 
 def group_one(
-    entry: dict, blobs: Path, chooser: CachedChooser | None, cap: int | None, out: Path
+    entry: dict, files: BlobFiles, chooser: CachedChooser | None, cap: int | None, out: Path
 ) -> dict:
     """One message grouped: its manifest line, and its text written if kept.
 
@@ -92,7 +92,7 @@ def group_one(
     the offsets being into the original text, so replacement can put the
     same value wherever one entity is mentioned.
     """
-    text = text_of(blob_path(blobs, entry["checksum"]))
+    text = text_of(files.path(entry["checksum"]))
     mentions = mentions_of(text, entry["mask"])
     line = {"checksum": entry["checksum"], "source": entry["source"]}
     asks = decisions(mentions)
@@ -129,8 +129,9 @@ def group_one(
     return line
 
 
-def run(args, blobs: Path) -> None:
+def run(args, files: BlobFiles) -> None:
     entries = kept(args.manifest)[: args.limit]
+    files.fetch(e["checksum"] for e in entries)
     chooser = chooser_for(args.llm, think=not args.no_think)
     out = args.out
     (out / "texts").mkdir(parents=True, exist_ok=True)
@@ -140,7 +141,7 @@ def run(args, blobs: Path) -> None:
     # rewrites it whole, the decisions made so far coming from the cache.
     with open(out / "manifest.jsonl", "w", encoding="utf-8") as manifest:
         for n, entry in enumerate(entries, 1):
-            line = group_one(entry, blobs, chooser, args.max_decisions, out)
+            line = group_one(entry, files, chooser, args.max_decisions, out)
             outcomes[line.pop("_outcome")] += 1
             if "rules_agree" in line:
                 outcomes["rules agree" if line["rules_agree"] else "rules differ"] += 1
@@ -171,7 +172,7 @@ def run(args, blobs: Path) -> None:
 # --- grouping by hand ---------------------------------------------------------
 
 
-def review(args, blobs: Path) -> None:
+def review(args, files: BlobFiles) -> None:
     """A sheet of labelled messages with two or more PER, ORG or LOC mentions of a class."""
     eligible = []
     for entry in kept(args.manifest):
@@ -193,7 +194,7 @@ def review(args, blobs: Path) -> None:
             "Example: `PER: 0 2 5 | 1 | 3 4`\n\n"
         )
         for n, entry in enumerate(chosen, 1):
-            text = text_of(blob_path(blobs, entry["checksum"]))
+            text = text_of(files.path(entry["checksum"]))
             mentions = [m for m in mentions_of(text, entry["mask"]) if m.cls in DECIDED]
             f.write(f"## {n}. {entry['checksum']}\n\n```\n{tagged(text, mentions)}\n```\n\n")
             for cls in DECIDED:
@@ -238,7 +239,7 @@ def links(groups: list[set[int]]) -> set[tuple[int, int]]:
     return {pair for g in groups for pair in combinations(sorted(g), 2)}
 
 
-def score(args, blobs: Path) -> None:
+def score(args, files: BlobFiles) -> None:
     truth = read_sheet(args.score)
     by_checksum = {e["checksum"]: e for e in kept(args.manifest)}
     approaches = [("rules", None)]
@@ -251,7 +252,7 @@ def score(args, blobs: Path) -> None:
         tally: dict[str, Counter] = {cls: Counter() for cls in DECIDED}
         for checksum, wanted in truth.items():
             entry = by_checksum[checksum]
-            text = text_of(blob_path(blobs, checksum))
+            text = text_of(files.path(checksum))
             mentions = mentions_of(text, entry["mask"])
             got = group_message(text, mentions, chooser).entities
             for cls, groups in wanted.items():
@@ -298,13 +299,13 @@ def main(argv=None) -> int:
     parser.add_argument("--score", type=Path, help="A sheet grouped by hand, to score against")
     parser.add_argument("--seed", type=int, default=0, help="Seeds the review sample")
     args = parser.parse_args(argv)
-    blobs = blobs_dir()
+    files = blob_files()
     if args.review:
-        review(args, blobs)
+        review(args, files)
     elif args.score:
-        score(args, blobs)
+        score(args, files)
     else:
-        run(args, blobs)
+        run(args, files)
     return 0
 
 

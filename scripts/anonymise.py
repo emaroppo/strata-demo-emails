@@ -53,10 +53,33 @@ def has_link(text: str) -> bool:
     return bool(LINK.search(text))
 
 
-def blob_path(blobs: Path, checksum: str) -> Path:
-    """Where a sample's bytes are, in the catalog's local blob store."""
-    [found] = list(blobs.glob(f"{checksum[:2]}/{checksum[2:4]}/{checksum}*"))
-    return found
+#: Where a catalog that keeps its blobs elsewhere has them fetched to. Under
+#: .state/, which is ignored: these are the messages.
+CACHE = Path(".state/blob-cache")
+
+
+class BlobFiles:
+    """Each sample's bytes as a file on this host, fetched once through the catalog.
+
+    Whether the catalog keeps them on this disk or in a bucket, the models
+    read paths, so they are cached here.
+    """
+
+    def __init__(self, catalog, cache: Path = CACHE):
+        self.catalog, self.cache = catalog, cache
+        self.paths: dict[str, Path] = {}
+
+    def fetch(self, checksums) -> None:
+        wanted = sorted(set(checksums) - self.paths.keys())
+        if wanted:
+            self.paths.update(self.catalog.ensure_cached(wanted, self.cache))
+        missing = [c for c in wanted if c not in self.paths]
+        if missing:
+            raise SystemExit(f"Not in this catalog: {', '.join(c[:12] for c in missing[:5])}")
+
+    def path(self, checksum: str) -> Path:
+        self.fetch([checksum])
+        return self.paths[checksum]
 
 
 def masked(text: str, spans: list[Span]) -> str:
@@ -94,6 +117,9 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--runs", type=Path, help="Where the runs are, if not the project's own runs/"
     )
+    parser.add_argument(
+        "--cache", type=Path, default=CACHE, help="Where messages are fetched to, if not local"
+    )
     parser.add_argument("--audit", type=int, default=100, help="Kept messages to sample")
     parser.add_argument("--seed", type=int, default=0, help="Seeds the audit and --sample")
     parser.add_argument("--limit", type=int, default=None, help="Only this many, for a trial run")
@@ -116,10 +142,10 @@ def main(argv=None) -> int:
     catalog = open_catalog(config)
     store = RunStore.open(args.runs or project.runs_dir)
     label_set_id, _ = catalog.label_sets.get(project.label_set_name)
-    blobs = Path(config.root) / "blobs"
+    files = BlobFiles(catalog, args.cache)
 
     def path_of(sample) -> Path:
-        return blob_path(blobs, sample.checksum)
+        return files.path(sample.checksum)
 
     labelled = catalog.samples.labelled(label_set_id, project.collections, source="human")
     # Candidate spans a corpus arrived with are nobody's judgement: those
@@ -134,6 +160,9 @@ def main(argv=None) -> int:
         before = {e["checksum"] for e in entries if e["kept"]}
         pool = [s for s in pool if s.checksum in before]
         labelled = [s for s in labelled if s.checksum in before]
+    # Fetched together rather than one by one, once the pool is as narrow as
+    # it gets without reading a message
+    files.fetch(s.checksum for s in [*pool, *labelled])
     if args.min_chars or args.max_chars is not None:
         longest = args.max_chars if args.max_chars is not None else float("inf")
 
