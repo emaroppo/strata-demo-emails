@@ -91,6 +91,9 @@ def main(argv=None) -> int:
     parser.add_argument("--gliner", required=True, help="Run id of the GLiNER model that masks")
     parser.add_argument("--tagger", required=True, help="Run id of the tagger that vetoes")
     parser.add_argument("--out", type=Path, default=Path("anonymised"))
+    parser.add_argument(
+        "--runs", type=Path, help="Where the runs are, if not the project's own runs/"
+    )
     parser.add_argument("--audit", type=int, default=100, help="Kept messages to sample")
     parser.add_argument("--seed", type=int, default=0, help="Seeds the audit and --sample")
     parser.add_argument("--limit", type=int, default=None, help="Only this many, for a trial run")
@@ -111,7 +114,7 @@ def main(argv=None) -> int:
     settings = Settings.load(None)
     config = settings.catalogs.named(project.catalog.name)
     catalog = open_catalog(config)
-    store = RunStore.open(project.runs_dir)
+    store = RunStore.open(args.runs or project.runs_dir)
     label_set_id, _ = catalog.label_sets.get(project.label_set_name)
     blobs = Path(config.root) / "blobs"
 
@@ -119,7 +122,11 @@ def main(argv=None) -> int:
         return blob_path(blobs, sample.checksum)
 
     labelled = catalog.samples.labelled(label_set_id, project.collections, source="human")
-    pool = catalog.samples.unlabelled(label_set_id, project.collections)
+    # Candidate spans a corpus arrived with are nobody's judgement: those
+    # messages are masked by the models like any unlabelled one
+    pool = catalog.samples.unlabelled(label_set_id, project.collections) + (
+        catalog.samples.labelled(label_set_id, project.collections, source="import")
+    )
     if args.limit is not None:
         pool = pool[: args.limit]
     if args.keep_from is not None:
